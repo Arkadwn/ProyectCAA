@@ -14,35 +14,37 @@ import java.sql.SQLException;
  * @version 27/03/2017
  */
 public class Conexion {
-    private Connection con = null;
+    private Connection conexion = null;
 
     /**
      * Genera la conexion a la BDD.
      * @return instancia de la clase que hace la conexion a la BDD
      */
-    public Connection getConexion(String iP, String usuario, String contraseña) {
+    public Connection getConexion(String iP, String usuario, String contraseña) throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             System.out.println("Error en driver: " + ex.getMessage());
         }
         try {
-            con = DriverManager.getConnection("jdbc:mysql://"+iP+"/ss?" 
+            conexion = DriverManager.getConnection("jdbc:mysql://"+iP+"/caa?" 
                     + "user="+usuario+"&password="+contraseña);
-        } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
+        } catch (SQLException sqlEx) {
+            System.out.println("SQLException: " + sqlEx.getMessage());
+            throw new SQLException(sqlEx.getMessage(), sqlEx);
         }
-        return con;
+        return conexion;
     }
 
     /**
      * Cierra la conexion a la BDD. 
      */
-    public void cerrarConexion(){
+    public void cerrarConexion(Connection conexion) throws SQLException{
         try{
-            con.close();
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+            conexion.close();
+        }catch (SQLException sqlEx) {
+            System.out.println("SQLException: " + sqlEx.getMessage());
+            throw new SQLException(sqlEx.getMessage(), sqlEx);
         }
     }
     
