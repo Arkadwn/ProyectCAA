@@ -12,45 +12,54 @@ import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.utilerias.UtileriasEncriptado;
 
 public class CofigurarBDD extends javax.swing.JFrame {
-    private UtileriasConexionBDD configuracionBDD;
-    
-    public CofigurarBDD() throws BadPaddingException, Exception{
+
+    public CofigurarBDD() throws BadPaddingException, Exception {
         initComponents();
         cargarConfiguracion();
         setLocationRelativeTo(null);
     }
-    
-    private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception{
-        File file = new File("C:\\Archivos\\dataBDD.ser");
-        if(file.exists()){
-        configuracionBDD = new UtileriasConexionBDD();
-        
-        DatosConexionBDD datosBDD = configuracionBDD.obtenerDatosBDD();
-        txtIP.setText(datosBDD.getDireccionIP());
-        txtUsuario.setText(datosBDD.getUsuario());
-        txtContraseña.setText(new UtileriasEncriptado().descifra(datosBDD.getContraseña()));
-        
-        }else{
-            File folder = new File("C:\\Archivos");
-            if(!folder.exists()){
-                folder.mkdirs();
+
+    private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException {
+        File archivo = new File("C:\\Archivos\\dataBDD.ser");
+        if (archivo.exists()) {
+            try {
+                DatosConexionBDD datosBDD = UtileriasConexionBDD.obtenerDatosBDD();
+                txtIP.setText(datosBDD.getDireccionIP());
+                txtUsuario.setText(datosBDD.getUsuario());
+                txtContraseña.setText(UtileriasEncriptado.descifra(datosBDD.getContraseña()));
+            } catch (Exception ex) {
+                //Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Ah ocurrido un error al cargar la configuración grabada, se mostrara la de por default");
+            }
+        } else {
+            creacionDirectorio();
+        }
+    }
+
+    private void creacionDirectorio() {
+        try {
+            File carpeta = new File("C:\\Archivos");
+            if (!carpeta.exists()) {
+                carpeta.mkdirs();
             }
             txtIP.setText("x.x.x.x");
             txtUsuario.setText("Usuario");
             txtContraseña.setText("contraseña");
-            if(!folder.exists()){
+            if (!carpeta.exists()) {
                 JOptionPane.showMessageDialog(this, "Error al crear el directorio");
             }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Lo lamento, ah ocurrido un error al crear el directorio");
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         labelTitulo = new javax.swing.JLabel();
         txtIP = new javax.swing.JTextField();
-        btnConenctar = new javax.swing.JButton();
+        btnConectar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         labelConfig = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
@@ -64,10 +73,10 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
         labelTitulo.setText("Configuración al servidor de la BDD:");
 
-        btnConenctar.setText("Conectar");
-        btnConenctar.addActionListener(new java.awt.event.ActionListener() {
+        btnConectar.setText("Conectar");
+        btnConectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConenctarActionPerformed(evt);
+                btnConectarActionPerformed(evt);
             }
         });
 
@@ -116,7 +125,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(btnCancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnConenctar)))
+                        .addComponent(btnConectar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -140,7 +149,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                     .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnConenctar)
+                    .addComponent(btnConectar)
                     .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -148,27 +157,29 @@ public class CofigurarBDD extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnConenctarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConenctarActionPerformed
-        configuracionBDD = new UtileriasConexionBDD();
+    private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         try {
-            if(configuracionBDD.comprobarConexionBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText())){
-                byte[] contraseña = new UtileriasEncriptado().cifra(txtContraseña.getText());
-                configuracionBDD.serializarDatosBDD(txtIP.getText(), txtUsuario.getText(), contraseña);
-                JOptionPane.showMessageDialog(this,"Conexión establecida");
-                new IniciarSesion().setVisible(true);
-                dispose();
+            if (UtileriasConexionBDD.comprobarConexionBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText())) {
+                guardarConfiguracion();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "No se pudo conectar al servido, revise configuración de red");
-        } catch (IllegalBlockSizeException ex) {
-            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor, revise configuración de red: " + ex.getSQLState());//Revisar
         } catch (BadPaddingException ex) {
-            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Ocurrio un error al tratar de guardar la configuración actual");
+            //Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnConenctarActionPerformed
+    }//GEN-LAST:event_btnConectarActionPerformed
+
+    public void guardarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception {
+        byte[] contraseña = UtileriasEncriptado.cifra(txtContraseña.getText());
+        UtileriasConexionBDD.serializarDatosBDD(txtIP.getText(), txtUsuario.getText(), contraseña);
+        JOptionPane.showMessageDialog(this, "Conexión establecida");
+        new IniciarSesion().setVisible(true);
+        dispose();
+    }
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
@@ -213,7 +224,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnConenctar;
+    private javax.swing.JButton btnConectar;
     private javax.swing.JLabel labelConfig;
     private javax.swing.JLabel labelContraseña;
     private javax.swing.JLabel labelIP;

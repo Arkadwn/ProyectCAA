@@ -2,6 +2,7 @@ package reglasnegocio.utilerias;
 
 import conexionbdd.Conexion;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -27,20 +28,16 @@ public class UtileriasConexionBDD {
      * @param usuario Cuenta del usuario en la BB a conectarse
      * @param contraseña Contraseña del usuario en la BDD
      */
-    public void serializarDatosBDD(String iP, String usuario, byte[] contraseña) {
+    public static void serializarDatosBDD(String iP, String usuario, byte[] contraseña) throws FileNotFoundException, IOException {
         DatosConexionBDD datos = new DatosConexionBDD();
         datos.setDireccionIP(iP);
         datos.setUsuario(usuario);
         
-        datos.setContraseña(contraseña);//Proteger contraseña
-        try {
+        datos.setContraseña(contraseña);//Proteger contraseña       
             FileOutputStream archivo = new FileOutputStream("/Archivos/dataBDD.ser");
             ObjectOutputStream stream = new ObjectOutputStream(archivo);
             stream.writeObject(datos);
             stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     /**
      * Realiza la lectura del archivo serializable que contiene los datos 
@@ -48,16 +45,12 @@ public class UtileriasConexionBDD {
      * 
      * @return Objeto de tipo DatosConexionBDD que contiene los datos de acceso
      */
-    public DatosConexionBDD obtenerDatosBDD() {
+    public static DatosConexionBDD obtenerDatosBDD() throws FileNotFoundException, IOException, ClassNotFoundException {
         DatosConexionBDD dataBDD = null;
-        try {
             FileInputStream archivo = new FileInputStream("/Archivos/dataBDD.ser");
             ObjectInputStream stream = new ObjectInputStream(archivo);
             dataBDD = (DatosConexionBDD) stream.readObject();
             stream.close();
-        } catch (ClassNotFoundException | IOException e) {
-            System.out.println("Error" + e.getMessage());   
-        }
         return dataBDD;
     }
     /**
@@ -71,7 +64,7 @@ public class UtileriasConexionBDD {
      * @throws SQLException Puede ocurrir al no poder conectar o en caso que el
      * exista una dificultad al conectar o desconectar.
      */
-    public boolean comprobarConexionBDD(String iP, String usuario, String contraseña) throws SQLException{
+    public static boolean comprobarConexionBDD(String iP, String usuario, String contraseña) throws SQLException{
         Connection conexion=null;
         try {
             conexion = new Conexion().getConexion(iP, usuario, contraseña);

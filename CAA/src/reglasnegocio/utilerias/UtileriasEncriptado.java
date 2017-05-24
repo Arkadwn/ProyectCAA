@@ -28,7 +28,7 @@ public class UtileriasEncriptado {
  * @throws IllegalBlockSizeException 
  * @throws BadPaddingException
  */
-    public byte[] cifra(String sinCifrar) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, Exception {
+    public static byte[] cifra(String sinCifrar) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, Exception {
         final byte[] bytes = sinCifrar.getBytes("UTF-8");
         final Cipher aes = obtieneCipher(true);
         final byte[] cifrado = aes.doFinal(bytes);
@@ -45,7 +45,7 @@ public class UtileriasEncriptado {
  * @throws BadPaddingException
  * @throws Exception 
  */
-    public String descifra(byte[] cifrado) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, Exception {
+    public static String descifra(byte[] cifrado) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, Exception {
         final Cipher aes = obtieneCipher(false);
         final byte[] bytes = aes.doFinal(cifrado);
         final String sinCifrar = new String(bytes, "UTF-8");
@@ -63,7 +63,7 @@ public class UtileriasEncriptado {
  * @throws NoSuchPaddingException
  * @throws InvalidKeyException 
  */
-    private Cipher obtieneCipher(boolean paraCifrar) throws NoSuchAlgorithmException, UnsupportedEncodingException, NoSuchPaddingException, InvalidKeyException{
+    private static Cipher obtieneCipher(boolean paraCifrar) throws NoSuchAlgorithmException, UnsupportedEncodingException, NoSuchPaddingException, InvalidKeyException{
         final String frase = "¡8478877f1bbd9f871e46ad4a4645804aabd13cd6ad63a657be9860d3a9d6a46c!";
         final MessageDigest digest = MessageDigest.getInstance("SHA");
         digest.update(frase.getBytes("UTF-8"));
