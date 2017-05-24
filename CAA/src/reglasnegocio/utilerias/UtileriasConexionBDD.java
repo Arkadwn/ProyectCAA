@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import reglasnegocio.DatosConexionBDD;
 
@@ -21,8 +19,6 @@ import reglasnegocio.DatosConexionBDD;
  * @author Miguel Leonardo Jimenez
  */
 public class UtileriasConexionBDD {
-    private ResultSet resultado;
-    private PreparedStatement sentencia;
     /**
      * Realiza serialización de los datos introducidos para su posterior uso en
      * la conexion a la BDD.
@@ -31,7 +27,7 @@ public class UtileriasConexionBDD {
      * @param usuario Cuenta del usuario en la BB a conectarse
      * @param contraseña Contraseña del usuario en la BDD
      */
-    public void serializarDatosBDD(String iP, String usuario, String contraseña) {
+    public void serializarDatosBDD(String iP, String usuario, byte[] contraseña) {
         DatosConexionBDD datos = new DatosConexionBDD();
         datos.setDireccionIP(iP);
         datos.setUsuario(usuario);

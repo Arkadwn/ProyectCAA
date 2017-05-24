@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class DatosConexionBDD implements Serializable{
     private String direccionIP;
     private String usuario;
-    private String contraseña;
+    private byte[] contraseña;
 
     public String getDireccionIP() {
         return direccionIP;
@@ -25,10 +25,10 @@ public class DatosConexionBDD implements Serializable{
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
-    public String getContraseña() {
+    public byte[] getContraseña() {
         return contraseña;
     }
-    public void setContraseña(String contraseña) {
+    public void setContraseña(byte[] contraseña) {
         this.contraseña = contraseña;
     }
     

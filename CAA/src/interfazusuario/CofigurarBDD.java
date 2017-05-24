@@ -4,27 +4,31 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.swing.JOptionPane;
 import reglasnegocio.DatosConexionBDD;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
+import reglasnegocio.utilerias.UtileriasEncriptado;
 
 public class CofigurarBDD extends javax.swing.JFrame {
-    private UtileriasConexionBDD conexionBDD;
-    public CofigurarBDD(){
+    private UtileriasConexionBDD configuracionBDD;
+    
+    public CofigurarBDD() throws BadPaddingException, Exception{
         initComponents();
         cargarConfiguracion();
         setLocationRelativeTo(null);
     }
     
-    private void cargarConfiguracion(){
+    private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception{
         File file = new File("C:\\Archivos\\dataBDD.ser");
         if(file.exists()){
-        conexionBDD = new UtileriasConexionBDD();
+        configuracionBDD = new UtileriasConexionBDD();
         
-        DatosConexionBDD datosBDD = conexionBDD.obtenerDatosBDD();
+        DatosConexionBDD datosBDD = configuracionBDD.obtenerDatosBDD();
         txtIP.setText(datosBDD.getDireccionIP());
         txtUsuario.setText(datosBDD.getUsuario());
-        txtContraseña.setText(datosBDD.getContraseña());
+        txtContraseña.setText(new UtileriasEncriptado().descifra(datosBDD.getContraseña()));
         
         }else{
             File folder = new File("C:\\Archivos");
@@ -145,10 +149,11 @@ public class CofigurarBDD extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConenctarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConenctarActionPerformed
-        conexionBDD = new UtileriasConexionBDD();
+        configuracionBDD = new UtileriasConexionBDD();
         try {
-            if(conexionBDD.comprobarConexionBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText())){
-                conexionBDD.serializarDatosBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText());
+            if(configuracionBDD.comprobarConexionBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText())){
+                byte[] contraseña = new UtileriasEncriptado().cifra(txtContraseña.getText());
+                configuracionBDD.serializarDatosBDD(txtIP.getText(), txtUsuario.getText(), contraseña);
                 JOptionPane.showMessageDialog(this,"Conexión establecida");
                 new IniciarSesion().setVisible(true);
                 dispose();
@@ -156,6 +161,12 @@ public class CofigurarBDD extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "No se pudo conectar al servido, revise configuración de red");
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnConenctarActionPerformed
 
@@ -191,7 +202,11 @@ public class CofigurarBDD extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CofigurarBDD().setVisible(true);
+                try {
+                    new CofigurarBDD().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
