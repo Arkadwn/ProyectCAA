@@ -8,10 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import static reglasnegocio.utilerias.UtileriasConexionBDD.obtenerDatosBDD;
-import static reglasnegocio.utilerias.UtileriasEncriptado.descifra;
+import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
  * Establece los metodos con los cuales se ingresa a la capa de conexion a la
@@ -24,8 +21,6 @@ import static reglasnegocio.utilerias.UtileriasEncriptado.descifra;
 public class UsuarioDAO implements IUsuarioDAO{
     
     private Connection accesoBDD;
-    private DatosConexionBDD datosBDD;
-    private String contrasenaBDD;
     
     /**
      * Comprueba si los datos ingresados por el usuario son correctos con
@@ -36,18 +31,24 @@ public class UsuarioDAO implements IUsuarioDAO{
      * @return regresa la confirmacion de la identidad del usuario
      */
     @Override
-    public boolean autentificarUsuario(String usuario, String contrasena) {
+    public boolean autentificarUsuario(String usuario, String contrasena){
         boolean confirmacion = false;
-        String contrasenaSha2 = "";
-        
+        String contrasenaSha2;
+        String[] datosBD = new String[3];
         
         try {
-            accesoBDD = new Conexion().getConexion("127.0.0.1","usercaa","arkadwn1");
-        } catch (SQLException ex) {
-            
+            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        contrasenaSha2 = cifrarContrasena(contrasena);
+        contrasenaSha2 = cifrarContrasena(contrasena,datosBD);
+        
+        try {
+            accesoBDD = new Conexion().getConexion(datosBD[0],datosBD[1],datosBD[2]);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
         
         try{
             PreparedStatement sentencia = accesoBDD.prepareStatement("SELECT contrasena from usuario where nombreUsuario = ?");
@@ -55,18 +56,19 @@ public class UsuarioDAO implements IUsuarioDAO{
             
             ResultSet tabla = sentencia.executeQuery();
             
-            if(tabla.next()){
+            while(tabla.next()){
                 if(tabla.getString(1).equals(contrasenaSha2)){
                     confirmacion = true;
+                    break;
                 }
             }
         }catch(SQLException e){
-            
+            System.out.println(e.getMessage());
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                
+                System.out.println(ex.getMessage());
             }
         }
         
@@ -77,16 +79,17 @@ public class UsuarioDAO implements IUsuarioDAO{
      * Codifica la contraseña que ha sido ingresada por el usuario.
      * 
      * @param contrasena contrasena del usuario.
+     * @param datosBDD
      * @return la contraseña codificada.
      */
     @Override
-    public String cifrarContrasena(String contrasena) {
+    public String cifrarContrasena(String contrasena,String[] datosBDD) {
         String contrasenaSha2 = "";
         
         try {
-            accesoBDD = new Conexion().getConexion("localhost", "root", "acdc");
+            accesoBDD = new Conexion().getConexion(datosBDD[0], datosBDD[1], datosBDD[2]);
         } catch (SQLException ex) {
-            
+            System.out.println(ex.getMessage());
         }
         
         try{
@@ -99,13 +102,13 @@ public class UsuarioDAO implements IUsuarioDAO{
             if(tabla.next()){
                 contrasenaSha2 = tabla.getString(1);
             }
-        } catch (SQLException e) {
-            
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                
+                System.out.println(ex.getMessage());
             }
         }
         
@@ -121,11 +124,18 @@ public class UsuarioDAO implements IUsuarioDAO{
     @Override
     public Usuario sacarDatosUsuario(String nombreUsuario) throws NullPointerException{
         Usuario usuario = null;
+        String[] datosBDD = new String[3];
         
         try {
-            accesoBDD = new Conexion().getConexion("localhost", "root", "acdc");
+            datosBDD = UtileriasConexionBDD.obtenerDatosBDD();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            accesoBDD = new Conexion().getConexion(datosBDD[0],datosBDD[1],datosBDD[2]);
         } catch (SQLException ex) {
-            
+            System.out.println(ex.getMessage());
         }
         
         try{
@@ -140,12 +150,12 @@ public class UsuarioDAO implements IUsuarioDAO{
             }
             
         } catch (SQLException ex) {
-            
+            System.out.println(ex.getMessage());
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                
+                System.out.println(ex.getMessage());
             }
         }
         

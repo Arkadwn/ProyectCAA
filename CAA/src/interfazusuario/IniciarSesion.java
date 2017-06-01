@@ -28,9 +28,11 @@ public class IniciarSesion extends javax.swing.JFrame {
             Usuario usuario = new Usuario();
             usuario.setContrasena(jPasswordContrasena.getText());
             usuario.setNombreUsuario(txtUsuario.getText());
+            System.out.println(usuario.getNombreUsuario());
             UsuarioDAO usuarioDAO = new UsuarioDAO();
             
             boolean autentificacion = usuarioDAO.autentificarUsuario(usuario.getNombreUsuario(), usuario.getContrasena());
+            System.out.println(autentificacion);
             
             if(autentificacion){
                 

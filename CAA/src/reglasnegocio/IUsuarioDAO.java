@@ -9,6 +9,6 @@ import java.sql.SQLException;
  */
 public interface IUsuarioDAO {
     public boolean autentificarUsuario(String usuario, String contrasena)throws SQLException;
-    public String cifrarContrasena(String contrasena);
+    public String cifrarContrasena(String contrasena,String[] datosBDD);
     public Usuario sacarDatosUsuario(String nombreUsuario)throws NullPointerException;
 }

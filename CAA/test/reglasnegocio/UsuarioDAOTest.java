@@ -1,7 +1,11 @@
 package reglasnegocio;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
  *
@@ -11,9 +15,11 @@ import org.junit.Test;
 public class UsuarioDAOTest {
     
     private UsuarioDAO usuarioDAO;
+    private String[] datosBD;
     
     public UsuarioDAOTest() {
         usuarioDAO = new UsuarioDAO();
+        datosBD = new String[3];
     }
     
 
@@ -22,9 +28,9 @@ public class UsuarioDAOTest {
      */
     @Test
     public void pruebaUsuarioYContraseñaIncorecctos() {
-        String usuario = "Foraneos";
-        String contrasena = "portafolio";
-        boolean resultado = false;
+        String usuario = "Leonardo";
+        String contrasena = "acdc619mljj";
+        boolean resultado = true;
         boolean confirmacion = usuarioDAO.autentificarUsuario(usuario, contrasena);
         assertEquals(resultado, confirmacion);
     }
@@ -60,14 +66,28 @@ public class UsuarioDAOTest {
     public void pruebaCifrarContrasenaCorrectamente() {
         String contrasena = "acdc619mljj";
         String contrasenaIncriptada = "49484d2d4d7b4104c96847a1f8a05566526015e2869017e0b45ce413dd3477ce";
-        String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
+        
+        try {
+            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String encriptacion = usuarioDAO.cifrarContrasena(contrasena,datosBD);
         assertEquals(contrasenaIncriptada, encriptacion);
     }
     
     @Test
     public void pruebaCifrarContrasenaTamañoCorrecto(){
         String contrasena = "elmejordiadeEsaEpocaFuerevolucionMexicanaFueEnMiL9991231QQQ@@@@@@@@@@@@@";
-        String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
+        
+        try {
+            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String encriptacion = usuarioDAO.cifrarContrasena(contrasena,datosBD);
         boolean confirmacion = encriptacion.length() == 64;
         assertEquals(true,confirmacion);
     }
