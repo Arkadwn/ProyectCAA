@@ -1,13 +1,15 @@
 package interfazusuario;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.JOptionPane;
-import reglasnegocio.DatosConexionBDD;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.utilerias.UtileriasEncriptado;
 
@@ -17,16 +19,77 @@ public class CofigurarBDD extends javax.swing.JFrame {
         initComponents();
         cargarConfiguracion();
         setLocationRelativeTo(null);
+        ignorarEntradasKey();
     }
 
+    private void ignorarEntradasKey() {
+        txtIP.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char caracter = e.getKeyChar();
+                if (((caracter < '0')
+                        || (caracter > '9'))
+                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                    e.consume();  // ignorar el evento de teclado
+                }
+            }
+        });
+        txtIP2.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char caracter = e.getKeyChar();
+                if (((caracter < '0')
+                        || (caracter > '9'))
+                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                    e.consume();  // ignorar el evento de teclado
+                }
+            }
+        });
+        txtIP3.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char caracter = e.getKeyChar();
+                if (((caracter < '0')
+                        || (caracter > '9'))
+                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                    e.consume();  // ignorar el evento de teclado
+                }
+            }
+        });
+        txtIP4.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char caracter = e.getKeyChar();
+                if (((caracter < '0')
+                        || (caracter > '9'))
+                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                    e.consume();  // ignorar el evento de teclado
+                }
+            }
+        });
+    }
+    private String regresarIP(String IP1, String IP2, String IP3, String IP4){
+        String cadenaIP = IP1 + "." + IP2 + "." + IP3 + "." + IP4;
+        return cadenaIP;
+    }
+    private String[] dividirIP(String IP){
+        String[] arrIP = new String[4];
+        StringTokenizer tokens;
+                tokens = new StringTokenizer(IP, ".");
+                int i=0;
+                while (tokens.hasMoreTokens()) {
+                    arrIP[i] = tokens.nextToken();
+                    i++;
+                }
+        return arrIP;
+    }
     private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException {
         File archivo = new File("C:\\Archivos\\dataBDD.ser");
         if (archivo.exists()) {
             try {
-                DatosConexionBDD datosBDD = UtileriasConexionBDD.obtenerDatosBDD();
-                txtIP.setText(datosBDD.getDireccionIP());
-                txtUsuario.setText(datosBDD.getUsuario());
-                txtContraseña.setText(UtileriasEncriptado.descifra(datosBDD.getContraseña()));
+                String[] datos = UtileriasConexionBDD.obtenerDatosBDD(), arrIP = dividirIP(datos[0]);
+                txtIP.setText(arrIP[0]);
+                txtIP2.setText(arrIP[1]);
+                txtIP3.setText(arrIP[2]);
+                txtIP4.setText(arrIP[3]);
+                txtUsuario.setText(datos[1]);
+                txtContraseña.setText(datos[2]);
             } catch (Exception ex) {
                 //Logger.getLogger(CofigurarBDD.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, "Ah ocurrido un error al cargar la configuración grabada, se mostrara la de por default");
@@ -67,6 +130,12 @@ public class CofigurarBDD extends javax.swing.JFrame {
         labelContraseña = new javax.swing.JLabel();
         txtContraseña = new javax.swing.JPasswordField();
         labelIP = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        txtIP2 = new javax.swing.JTextField();
+        txtIP3 = new javax.swing.JTextField();
+        txtIP4 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Conexión a la BDD");
@@ -96,6 +165,12 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
         labelIP.setText("IP:");
 
+        jLabel1.setText(".");
+
+        jLabel2.setText(".");
+
+        jLabel3.setText(".");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,55 +178,80 @@ public class CofigurarBDD extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(labelConfig)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(labelUsuario)
-                                        .addComponent(labelContraseña)
-                                        .addComponent(labelIP))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtIP, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(txtUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-                                        .addComponent(txtContraseña))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addComponent(labelTitulo)))
-                        .addGap(0, 33, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(203, 203, 203)
+                        .addComponent(labelConfig))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
                         .addComponent(btnCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnConectar)))
-                .addContainerGap())
+                        .addGap(143, 143, 143)
+                        .addComponent(btnConectar))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(22, 22, 22)
+                            .addComponent(labelContraseña)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(44, 44, 44)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(labelUsuario)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(labelIP)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(5, 5, 5)
+                                    .addComponent(jLabel1)
+                                    .addGap(7, 7, 7)
+                                    .addComponent(txtIP2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(5, 5, 5)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, 0)
+                                    .addComponent(txtIP3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(5, 5, 5)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, 0)
+                                    .addComponent(txtIP4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(12, 12, 12))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(labelTitulo)
+                .addGap(67, 67, 67))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(20, 20, 20)
                 .addComponent(labelTitulo)
-                .addGap(1, 1, 1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelConfig)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelIP))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelUsuario))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtIP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(labelIP))
+                    .addComponent(jLabel1)
+                    .addComponent(txtIP2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtIP3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtIP4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(labelUsuario))
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelContraseña)
                     .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnConectar)
-                    .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCancelar)
+                    .addComponent(btnConectar))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         pack();
@@ -175,9 +275,10 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
     public void guardarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception {
         byte[] contraseña = UtileriasEncriptado.cifra(txtContraseña.getText());
-        UtileriasConexionBDD.serializarDatosBDD(txtIP.getText(), txtUsuario.getText(), contraseña);
+        String IP = regresarIP(txtIP.getText(), txtIP2.getText(), txtIP3.getText(), txtIP4.getText());
+        UtileriasConexionBDD.serializarDatosBDD(IP, txtUsuario.getText(), contraseña);
         JOptionPane.showMessageDialog(this, "Conexión establecida");
-        new IniciarSesion().setVisible(true);
+        //new IniciarSesion().setVisible(true);
         dispose();
     }
 
@@ -225,6 +326,9 @@ public class CofigurarBDD extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConectar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel labelConfig;
     private javax.swing.JLabel labelContraseña;
     private javax.swing.JLabel labelIP;
@@ -232,6 +336,9 @@ public class CofigurarBDD extends javax.swing.JFrame {
     private javax.swing.JLabel labelUsuario;
     private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txtIP;
+    private javax.swing.JTextField txtIP2;
+    private javax.swing.JTextField txtIP3;
+    private javax.swing.JTextField txtIP4;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
