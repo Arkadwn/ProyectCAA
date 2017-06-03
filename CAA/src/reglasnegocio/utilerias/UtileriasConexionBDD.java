@@ -37,9 +37,8 @@ public class UtileriasConexionBDD {
         DatosConexionBDD datos = new DatosConexionBDD();
         datos.setDireccionIP(iP);
         datos.setUsuario(usuario);
-
-        datos.setContraseña(contraseña);//Proteger contraseña       
-        FileOutputStream archivo = new FileOutputStream("/Archivos/dataBDD.ser");
+        datos.setContraseña(contraseña);
+        FileOutputStream archivo = new FileOutputStream(obtenerDirectorioSO(true));
         ObjectOutputStream stream = new ObjectOutputStream(archivo);
         stream.writeObject(datos);
         stream.close();
@@ -49,12 +48,12 @@ public class UtileriasConexionBDD {
      * Realiza la lectura del archivo serializable que contiene los datos
      * almacenados de la conexion a la BDD.
      *
-     * @return Arreglo de tipo String de tipo DatosConexionBDD que contiene
-     * los datos de acceso
+     * @return Arreglo de tipo String de tipo DatosConexionBDD que contiene los
+     * datos de acceso
      */
     public static String[] obtenerDatosBDD() throws FileNotFoundException, IOException, ClassNotFoundException {
-        DatosConexionBDD dataBDD = null;
-        FileInputStream archivo = new FileInputStream("/Archivos/dataBDD.ser");
+        DatosConexionBDD dataBDD;
+        FileInputStream archivo = new FileInputStream(obtenerDirectorioSO(true));
         ObjectInputStream stream = new ObjectInputStream(archivo);
         dataBDD = (DatosConexionBDD) stream.readObject();
         stream.close();
@@ -99,5 +98,28 @@ public class UtileriasConexionBDD {
             System.out.println("Error SQL: " + sqlEx.getMessage());
         }
         return banderaConexion;
+    }
+    
+    /**
+     * 
+     * @param esArchivo
+     * @return 
+     */
+    public static String obtenerDirectorioSO(boolean esArchivo) {
+        String direccion;
+        if (esArchivo) {
+            if ("Win".equals(System.getProperty("os.name").substring(0, 3))) {
+                direccion = "C:\\Archivos\\dataBDD.ser";
+            } else {
+                direccion = "/Archivos/dataBDD.ser";
+            }
+        }else{
+            if ("Win".equals(System.getProperty("os.name").substring(0, 3))) {
+                direccion = "C:\\Archivos";
+            } else {
+                direccion = "/Archivos";
+            }
+        }
+        return direccion;
     }
 }

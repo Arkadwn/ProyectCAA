@@ -29,7 +29,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 if (((caracter < '0')
                         || (caracter > '9'))
                         && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
-                    e.consume();  // ignorar el evento de teclado
+                    e.consume();
                 }
             }
         });
@@ -39,7 +39,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 if (((caracter < '0')
                         || (caracter > '9'))
                         && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
-                    e.consume();  // ignorar el evento de teclado
+                    e.consume();
                 }
             }
         });
@@ -49,7 +49,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 if (((caracter < '0')
                         || (caracter > '9'))
                         && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
-                    e.consume();  // ignorar el evento de teclado
+                    e.consume();
                 }
             }
         });
@@ -59,28 +59,31 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 if (((caracter < '0')
                         || (caracter > '9'))
                         && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
-                    e.consume();  // ignorar el evento de teclado
+                    e.consume();
                 }
             }
         });
     }
-    private String regresarIP(String IP1, String IP2, String IP3, String IP4){
-        String cadenaIP = IP1 + "." + IP2 + "." + IP3 + "." + IP4;
+
+    private String regresarIP() {
+        String cadenaIP = txtIP.getText() + "." + txtIP2.getText() + "." + txtIP3.getText() + "." + txtIP4.getText();
         return cadenaIP;
     }
-    private String[] dividirIP(String IP){
+
+    private String[] dividirIP(String IP) {
         String[] arrIP = new String[4];
         StringTokenizer tokens;
-                tokens = new StringTokenizer(IP, ".");
-                int i=0;
-                while (tokens.hasMoreTokens()) {
-                    arrIP[i] = tokens.nextToken();
-                    i++;
-                }
+        tokens = new StringTokenizer(IP, ".");
+        int i = 0;
+        while (tokens.hasMoreTokens()) {
+            arrIP[i] = tokens.nextToken();
+            i++;
+        }
         return arrIP;
     }
+
     private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException {
-        File archivo = new File("C:\\Archivos\\dataBDD.ser");
+        File archivo = new File(UtileriasConexionBDD.obtenerDirectorioSO(true));
         if (archivo.exists()) {
             try {
                 String[] datos = UtileriasConexionBDD.obtenerDatosBDD(), arrIP = dividirIP(datos[0]);
@@ -101,18 +104,18 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
     private void creacionDirectorio() {
         try {
-            File carpeta = new File("C:\\Archivos");
+            File carpeta = new File(UtileriasConexionBDD.obtenerDirectorioSO(false));
             if (!carpeta.exists()) {
                 carpeta.mkdirs();
             }
-            txtIP.setText("x.x.x.x");
+            txtIP.setText("X");
+            txtIP2.setText("X");
+            txtIP3.setText("X");
+            txtIP4.setText("X");
             txtUsuario.setText("Usuario");
             txtContraseña.setText("contraseña");
-            if (!carpeta.exists()) {
-                JOptionPane.showMessageDialog(this, "Error al crear el directorio");
-            }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Lo lamento, ah ocurrido un error al crear el directorio");
+            JOptionPane.showMessageDialog(this, "Lo lamentamos, ah ocurrido un error al crear el directorio");
         }
     }
 
@@ -259,7 +262,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         try {
-            if (UtileriasConexionBDD.comprobarConexionBDD(txtIP.getText(), txtUsuario.getText(), txtContraseña.getText())) {
+            if (UtileriasConexionBDD.comprobarConexionBDD(regresarIP(), txtUsuario.getText(), txtContraseña.getText())) {
                 guardarConfiguracion();
             }
         } catch (SQLException ex) {
@@ -275,10 +278,9 @@ public class CofigurarBDD extends javax.swing.JFrame {
 
     public void guardarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception {
         byte[] contraseña = UtileriasEncriptado.cifra(txtContraseña.getText());
-        String IP = regresarIP(txtIP.getText(), txtIP2.getText(), txtIP3.getText(), txtIP4.getText());
-        UtileriasConexionBDD.serializarDatosBDD(IP, txtUsuario.getText(), contraseña);
+        UtileriasConexionBDD.serializarDatosBDD(regresarIP(), txtUsuario.getText(), contraseña);
         JOptionPane.showMessageDialog(this, "Conexión establecida");
-        //new IniciarSesion().setVisible(true);
+        new IniciarSesion().setVisible(true);
         dispose();
     }
 
