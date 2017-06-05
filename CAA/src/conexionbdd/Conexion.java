@@ -18,9 +18,14 @@ public class Conexion {
 
     /**
      * Genera la conexion a la BDD.
+     * @param datosBDD Arreglo de String con los datos necesarios para la
+     * conexion a la bdd, como lo es la IP, el usuario y la contraseña.
      * @return instancia de la clase que hace la conexion a la BDD
      */
-    public Connection getConexion(String iP, String usuario, String contraseña) throws SQLException {
+    public Connection getConexion(String[] datosBDD) throws SQLException {
+        String iP = datosBDD[0]; 
+        String usuario = datosBDD[1];
+        String contraseña = datosBDD[2];
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {

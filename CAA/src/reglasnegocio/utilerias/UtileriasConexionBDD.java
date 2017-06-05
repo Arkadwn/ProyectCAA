@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import reglasnegocio.DatosConexionBDD;
+import reglasnegocio.entidades.DatosConexionBDD;
 
 /**
  * Define los metodos que guardaran la informacion para la conexión a la BDD por
@@ -85,8 +85,12 @@ public class UtileriasConexionBDD {
      */
     public static boolean comprobarConexionBDD(String iP, String usuario, String contraseña) throws SQLException {
         Connection conexion = null;
+        String[] datosBDD = new String[3];
+        datosBDD[0] = iP;
+        datosBDD[1] = usuario;
+        datosBDD[2] = contraseña;
         try {
-            conexion = new Conexion().getConexion(iP, usuario, contraseña);
+            conexion = new Conexion().getConexion(datosBDD);
         } catch (SQLException sqlEx) {
             System.out.println("Error SQL: " + sqlEx.getMessage());
         }
@@ -101,9 +105,13 @@ public class UtileriasConexionBDD {
     }
     
     /**
+     * Retorna una cadena correspondiente a una carpeta o el archivo donde es
+     * guardado la configuración de la BDD. El metodo detecta automaticamente el
+     * SO huesped.
      * 
-     * @param esArchivo
-     * @return 
+     * @param esArchivo si este es true indica que el directorio es la carpeta
+     * si es falso indica que se refiere al archivo.
+     * @return La cadena correspondiente a donde sera guardado el 
      */
     public static String obtenerDirectorioSO(boolean esArchivo) {
         String direccion;

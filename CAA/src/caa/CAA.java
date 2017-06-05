@@ -5,6 +5,7 @@ import interfazusuario.IniciarSesion;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
  *
@@ -13,13 +14,7 @@ import java.util.logging.Logger;
  */
 public class CAA {
     public static void main(String[] args) {
-     String nombreSO = System.getProperty("os.name");
-        File archivo;
-        if (!"Linux".equals(nombreSO)) {
-            archivo = new File("C:\\Archivos\\dataBDD.ser");
-        } else {
-            archivo = new File("/Archivos/dataBDD.ser");
-        }
+        File archivo = new File(UtileriasConexionBDD.obtenerDirectorioSO(true));
         if (archivo.exists()) {
             new IniciarSesion().setVisible(true);
         }else{
