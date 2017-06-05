@@ -1,4 +1,4 @@
-package reglasnegocio;
+package reglasnegocio.entidades;
 
 /**
  *
@@ -6,7 +6,6 @@ package reglasnegocio;
  * @author Adrina Bustamante Zarate
  */
 public class Usuario {
-    private String idUsuario;
     private String tipo;
     private String contrasena;
     private String nombreUsuario;
@@ -26,15 +25,7 @@ public class Usuario {
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
-
-    public String getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(String idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
+    
     public String getTipo() {
         return tipo;
     }
@@ -44,6 +35,6 @@ public class Usuario {
     }
     
     public boolean equal(Usuario usuario){
-        return usuario.getIdUsuario().equals(idUsuario) && usuario.getTipo().equals(tipo);
+        return usuario.getNombreUsuario().equals(nombreUsuario) && usuario.getTipo().equals(tipo);
     }
 }

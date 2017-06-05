@@ -1,5 +1,7 @@
 package reglasnegocio;
 
+import reglasnegocio.usuariogeneral.UsuarioDAO;
+import reglasnegocio.entidades.Usuario;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +29,7 @@ public class UsuarioDAOTest {
      * Pruena de un usuario incorrecto y una contraseña incorrecta.
      */
     @Test
-    public void pruebaUsuarioYContraseñaIncorecctos() {
+    public void pruebaUsuarioYContraseñaCorrectos() {
         String usuario = "Leonardo";
         String contrasena = "acdc619mljj";
         boolean resultado = true;
@@ -40,7 +42,7 @@ public class UsuarioDAOTest {
      */
     @Test
     public void pruebaUsuarioCorrectoYContrasenaIncorrecto() {
-        String usuario = "Mauricio";
+        String usuario = "Adrian";
         String contrasena = "acdc619mljj";
         boolean resultado = false;
         boolean confirmacion = usuarioDAO.autentificarUsuario(usuario, contrasena);
@@ -96,7 +98,7 @@ public class UsuarioDAOTest {
     public void pruebaSacarDatosCorrectosDeUnUsuario() {
         String nombreUsuario = "Leonardo";
         Usuario usuario = new Usuario();
-        usuario.setIdUsuario("USU1");
+        usuario.setNombreUsuario("Leonardo");
         usuario.setTipo("ASE");
         Usuario usuarioFinal = usuarioDAO.sacarDatosUsuario(nombreUsuario);
         assertEquals(true,usuario.equal(usuarioFinal));
@@ -106,7 +108,7 @@ public class UsuarioDAOTest {
     public void pruebaSacarDatosIncorrectosDeUnUsuario(){
         String nombreUsuario = "Roberto";
         Usuario usuario = new Usuario();
-        usuario.setIdUsuario("USU2");
+        usuario.setNombreUsuario("Roberto");
         usuario.setTipo("ASE");
         Usuario usuarioFinal = usuarioDAO.sacarDatosUsuario(nombreUsuario);
         assertEquals(false,usuario.equal(usuarioFinal));
