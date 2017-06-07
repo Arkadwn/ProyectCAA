@@ -2,6 +2,8 @@ package reglasnegocio;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import reglasnegocio.entidadesDAO.UsuarioDAO;
 import reglasnegocio.entidades.Usuario;
 import static org.junit.Assert.assertEquals;
@@ -28,18 +30,24 @@ public class UsuarioDAOTest {
      */
     @Test
     public void pruebaUsuarioYContraseñaCorrectos() {
-        String usuario = "Leonardo";
-        String contrasena = "acdc619mljj";
-        boolean resultado = true;
-        boolean confirmacion = usuarioDAO.autentificarUsuario(usuario, contrasena);
-        assertEquals(resultado, confirmacion);
+        try {
+            String usuario = "Leonardo";
+            String contrasena = "acdc619mljj";
+            boolean resultado = true;
+            boolean confirmacion = usuarioDAO.autentificarUsuario(usuario, contrasena);
+            assertEquals(resultado, confirmacion);
+        } catch (IOException ex) {
+            
+        } catch (SQLException ex) {
+            
+        }
     }
     
     /**
      * Prueba de un usuario correcto y una contraseña incorrecta
      */
     @Test
-    public void pruebaUsuarioCorrectoYContrasenaIncorrecto() {
+    public void pruebaUsuarioCorrectoYContrasenaIncorrecto() throws SQLException, IOException {
         String usuario = "Adrian";
         String contrasena = "acdc619mljj";
         boolean resultado = false;
@@ -51,7 +59,7 @@ public class UsuarioDAOTest {
      * Prueba de seguridad contra inyeccion de codigo
      */
     @Test
-    public void pruebaContraInyeccionDeCodigo(){
+    public void pruebaContraInyeccionDeCodigo() throws SQLException, IOException{
         String usuario = "'";
         String contrasena = "' or 1=1 ##";
         boolean resultado = false;
@@ -63,7 +71,7 @@ public class UsuarioDAOTest {
      * Test of cifrarContrasena method, of class UsuarioDAO.
      */
     @Test
-    public void pruebaCifrarContrasenaCorrectamente() {
+    public void pruebaCifrarContrasenaCorrectamente() throws SQLException, IOException {
         String contrasena = "acdc619mljj";
         String contrasenaIncriptada = "49484d2d4d7b4104c96847a1f8a05566526015e2869017e0b45ce413dd3477ce";
         String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
@@ -71,7 +79,7 @@ public class UsuarioDAOTest {
     }
     
     @Test
-    public void pruebaCifrarContrasenaTamañoCorrecto(){
+    public void pruebaCifrarContrasenaTamañoCorrecto() throws SQLException, IOException{
         String contrasena = "elmejordiadeEsaEpocaFuerevolucionMexicanaFueEnMiL9991231QQQ@@@@@@@@@@@@@";
         String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
         boolean confirmacion = encriptacion.length() == 64;
