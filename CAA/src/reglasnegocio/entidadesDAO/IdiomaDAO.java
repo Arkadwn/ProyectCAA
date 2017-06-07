@@ -10,14 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reglasnegocio.asesor.IIdiomaDAOAsesor;
 import reglasnegocio.entidades.Idioma;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.coordinador.IIdiomaDAOCoord;
 
 /**
- *
+ * Implementa todos los metodos que son definidos en la interfaz que implementa,
+ * declara los metodos que hacen diversos tipos de busquedas, selección de los
+ * idiomas; en coordinación con la capa de conexionbdd para su uso en capa 
+ * superior o de su mismo nivel.
+ * 
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
  */
 public class IdiomaDAO implements IIdiomaDAOCoord, IIdiomaDAOAsesor{
 
@@ -25,6 +29,13 @@ public class IdiomaDAO implements IIdiomaDAOCoord, IIdiomaDAOAsesor{
     private PreparedStatement sentenciaSQL;
     private Connection conexionBDD;
     
+    /**
+     * Muestra todos los idiomas actuales guardados en la base de datos.
+     * 
+     * @return Lista de todos los Idiomas guardados actualmente en la BDD
+     * @throws SQLException
+     * @throws IOException
+     */
     public List<Idioma> mostrarIdiomasActuales() throws SQLException, IOException{
         List<Idioma> listaIdiomas = new ArrayList<>();
         Idioma idioma;
@@ -40,6 +51,7 @@ public class IdiomaDAO implements IIdiomaDAOCoord, IIdiomaDAOAsesor{
                 idioma.setNombreIdioma(resultadoSQL.getString("nombre"));
                 listaIdiomas.add(idioma);
             }
+            
         } catch (SQLException ex) {
             Logger.getLogger(ExperEduDAO.class.getName()).log(Level.SEVERE, null, ex);
             throw new SQLException("Error al mostrar los idiomas actuales; Error SQLException: ", ex);

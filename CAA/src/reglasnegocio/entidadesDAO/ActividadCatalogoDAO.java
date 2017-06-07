@@ -15,8 +15,13 @@ import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.coordinador.IActividadCatalogoDAOCoord;
 
 /**
- *
+ * Implementa todos los metodos que son definidos en la interfaz que implementa,
+ * declara los metodos que controlan y manipulan la creación, la edición, la 
+ * eliminación, la busqueda y la selección de las actividades, en coordinación 
+ * con la capa de conexionbdd para su uso en capa superior o de su mismo nivel.
+ * 
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
  */
 public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
 
@@ -24,6 +29,17 @@ public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
     private PreparedStatement sentenciaSQL;
     private Connection conexionBDD;
 
+    /**
+     * Guarda una actividad en la BDD, segun sean los parametros enviados
+     * 
+     * @param experEdu identificador de la EE a la que pertence
+     * @param tipoActividad Establece el tipo de Actividad
+     * @param nombreActividadCat Nombre de la actividad a guardar
+     * @param descripActivi Breve descripción de la actividad a guardar
+     * @return true si se guardo correctamente la actividad
+     * @throws SQLException
+     * @throws IOException
+     */
     public boolean guardarActividadCatal(String experEdu, String tipoActividad, String nombreActividadCat, String descripActivi)
             throws SQLException, IOException {
         boolean seGuardo = true;
@@ -59,6 +75,18 @@ public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
         return seGuardo;
     }
 
+    /**
+     * Realiza una busqueda de todas las actividades concordantes con un 
+     * criterio de busqueda que es mandado como parametro y la busqueda en si.
+     * El resultado lo almacena en una lista de ActividadCatalogo.
+     * 
+     * @param criterioBusq Criterio de busqueda para la consulta
+     * @param busqueda Lo que sera comparado con el criterio de busqueda
+     * @return Lista de Actividades cada una corresponde a un resultado de 
+     * la consulta
+     * @throws SQLException
+     * @throws IOException
+     */
     public List<ActividadCatalogo> buscarActividades(String criterioBusq, String busqueda) throws SQLException, IOException {
         List<ActividadCatalogo> listaActividades = new ArrayList();
         ActividadCatalogo actividad;
@@ -96,6 +124,18 @@ public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
         return listaActividades;
     }
 
+    /**
+     * Realiza una actualización a los datos de una actividad ya guardada en la 
+     * BDD. Recibé un objeto de tipo ActividadCatalogo, extrae la información y
+     * realiza la edición de la actividad en la BDD.
+     * 
+     * @param activiCatalModif objeto ActividadCatalogo que contiene toda la 
+     * información nueva a modificar para la Actividad ya almacenada
+     * @return true si la edición se realizo con exito, en caso contrario
+     * retorna un true
+     * @throws SQLException
+     * @throws IOException
+     */
     public boolean editarActividadCatal(ActividadCatalogo activiCatalModif) throws SQLException, IOException {
         boolean seEdito = true;
 
@@ -129,6 +169,17 @@ public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
         return seEdito;
     }
 
+    /**
+     * Retorna un objeto del tipo ActividadCatalogoresultado de una busqueda
+     * en la BDD de una actividad por su identificador. El objeto contiene toda
+     * la información de la actividad requeridad.
+     * 
+     * @param idActiviCatal identificador unico de la actividad solicitada
+     * @return Objeto del tipo ActividadCatalogo que contiene toda la 
+     * información de la actividad requeridad.
+     * @throws SQLException
+     * @throws IOException
+     */
     public ActividadCatalogo mostrarDetallesActiv(String idActiviCatal) throws SQLException, IOException {
         ActividadCatalogo actividad = new ActividadCatalogo();
 
@@ -164,6 +215,15 @@ public class ActividadCatalogoDAO implements IActividadCatalogoDAOCoord {
         return actividad;
     }
 
+    /**
+     * Realiza la eliminación de una actividad almacenada en la BDD segun su 
+     * identificador.
+     * 
+     * @param idActiviCatal identificador unico de la actividad a borrar
+     * @return true si la eliminación fue exitosa y retorna falso si no fue así
+     * @throws SQLException
+     * @throws IOException
+     */
     public boolean borrarActiviCatal(String idActiviCatal) throws SQLException, IOException {
         boolean seBorro = true;
 
