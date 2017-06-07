@@ -8,6 +8,7 @@ import java.util.List;
 /**
  *
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
  */
 public interface IActividadCatalogoDAOCoord {
     public boolean guardarActividadCatal(String experEdu, String tipoActividad, String nombreActividadCat, String descripActivi) 

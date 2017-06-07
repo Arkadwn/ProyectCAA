@@ -8,6 +8,7 @@ import reglasnegocio.entidades.Idioma;
 /**
  *
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
  */
 public interface IIdiomaDAOCoord {
     

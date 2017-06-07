@@ -8,6 +8,7 @@ import reglasnegocio.entidades.ExperienciaEducativa;
 /**
  *
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
  */
 public interface IExperEduDAOCoord {
     public List<ExperienciaEducativa> mostrarEEPorIdioma(String idIdioma)throws SQLException, IOException;

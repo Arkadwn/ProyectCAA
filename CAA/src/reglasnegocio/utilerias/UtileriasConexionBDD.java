@@ -32,6 +32,8 @@ public class UtileriasConexionBDD {
      * @param iP Direccion IP del servidor a conectar
      * @param usuario Cuenta del usuario en la BB a conectarse
      * @param contraseña Contraseña del usuario en la BDD
+     * @throws FileNotFoundException
+     * @throws IOException
      */
     public static void serializarDatosBDD(String iP, String usuario, byte[] contraseña) throws FileNotFoundException, IOException {
         DatosConexionBDD datos = new DatosConexionBDD();
@@ -48,18 +50,22 @@ public class UtileriasConexionBDD {
      * Realiza la lectura del archivo serializable que contiene los datos
      * almacenados de la conexion a la BDD.
      *
-     * @return Arreglo de tipo String de tipo DatosConexionBDD que contiene los
-     * datos de acceso
+     * @return Arreglo de tipo String que contiene los datos de acceso a la BDD
+     * @throws FileNotFoundException
+     * @throws ClassNotFoundException
      */
     public static String[] obtenerDatosBDD() throws FileNotFoundException, IOException, ClassNotFoundException {
         DatosConexionBDD dataBDD;
         FileInputStream archivo = new FileInputStream(obtenerDirectorioSO(true));
         ObjectInputStream stream = new ObjectInputStream(archivo);
         dataBDD = (DatosConexionBDD) stream.readObject();
+
         stream.close();
+
         String[] datos = new String[3];
         datos[0] = dataBDD.getDireccionIP();
         datos[1] = dataBDD.getUsuario();
+
         try {
             datos[2] = UtileriasEncriptado.descifra(dataBDD.getContraseña());
         } catch (IllegalBlockSizeException ex) {
@@ -89,6 +95,7 @@ public class UtileriasConexionBDD {
         datosBDD[0] = iP;
         datosBDD[1] = usuario;
         datosBDD[2] = contraseña;
+
         try {
             conexion = new Conexion().getConexion(datosBDD);
         } catch (SQLException sqlEx) {
@@ -101,33 +108,34 @@ public class UtileriasConexionBDD {
         } catch (SQLException sqlEx) {
             System.out.println("Error SQL: " + sqlEx.getMessage());
         }
+
         return banderaConexion;
     }
-    
+
     /**
      * Retorna una cadena correspondiente a una carpeta o el archivo donde es
      * guardado la configuración de la BDD. El metodo detecta automaticamente el
      * SO huesped.
-     * 
+     *
      * @param esArchivo si este es true indica que el directorio es la carpeta
      * si es falso indica que se refiere al archivo.
-     * @return La cadena correspondiente a donde sera guardado el 
+     * @return La cadena correspondiente a donde sera guardado el
      */
     public static String obtenerDirectorioSO(boolean esArchivo) {
         String direccion;
+
         if (esArchivo) {
             if ("Win".equals(System.getProperty("os.name").substring(0, 3))) {
                 direccion = "C:\\Archivos\\dataBDD.ser";
             } else {
                 direccion = "/Archivos/dataBDD.ser";
             }
-        }else{
-            if ("Win".equals(System.getProperty("os.name").substring(0, 3))) {
-                direccion = "C:\\Archivos";
-            } else {
-                direccion = "/Archivos";
-            }
+        } else if ("Win".equals(System.getProperty("os.name").substring(0, 3))) {
+            direccion = "C:\\Archivos";
+        } else {
+            direccion = "/Archivos";
         }
+
         return direccion;
     }
 }
