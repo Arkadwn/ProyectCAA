@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package reglasnegocio.entidades;
 
 /**
- *
- * @author Leonardo
+ * Contiene las caracteristicas de un salon de clases, los cuales son apartados
+ * para la realizacion de activadesProgramadas.
+ * 
+ * @author Miguel Leonardo Jimenez Jimenez
+ * @author Adrian bustamante Zarate
  */
 public class Salon {
     private String nombreSalon;

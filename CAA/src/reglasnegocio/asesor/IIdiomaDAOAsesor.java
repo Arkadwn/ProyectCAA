@@ -6,7 +6,9 @@ import java.util.List;
 import reglasnegocio.entidades.Idioma;
 
 /**
- *
+ * Especifica los metodos que un asesor puede realizar con respecto a la clase
+ * IdiomaDAO.
+ * 
  * @author Miguel Leonardo Jimenez Jimenez
  * @author Adrian Bustamante Zarate
  */

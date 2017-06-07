@@ -1,7 +1,9 @@
 package reglasnegocio.entidades;
 
 /**
- *
+ * Contiene las caracteristicas que le pertenecen a un usuario que pertenece al
+ * sistema CAA, para su posterior cargo de permisos.
+ * 
  * @author Miguel Leonardo Jiménez Jiménez
  * @author Adrina Bustamante Zarate
  */

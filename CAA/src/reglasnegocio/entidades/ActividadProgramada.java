@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
- *
+ * Contiene todos los atributos que se le dan a una actividad cuando fue
+ * asignada a una fecha en especifico, un asesor que la imparta, asi como los
+ * alumno que se puntaron dentro de ella.
+ * 
  * @author Miguel Leonardo Jimenez Jimenez
  * @author Adrian Bustamante Zarate
  */
@@ -124,6 +128,16 @@ public class ActividadProgramada {
         this.reservaciones = reservaciones;
     }
     
+    /**
+     * Realiza un filtrado de actividades de un asesor segun la fcha y hora en
+     * que seran realizadas, con el fin de no mostrar las actividades que ya
+     * han pasado o fueron suspendidas.
+     * 
+     * @param actividades List de ActividadProgramada asignadas a un asesor
+     * @param lapso filtro de acuerdo al rango de tiempo que desea.
+     * @return List de ActividadProgramada las cuales cumplen con los
+     * requerimientos establecidos.
+     */
     public static List<ActividadProgramada> filtrarActividades(List<ActividadProgramada> actividades, String lapso){
         List<ActividadProgramada> actividadesFiltradas = new ArrayList();
         Calendar calendar = Calendar.getInstance();
@@ -162,6 +176,12 @@ public class ActividadProgramada {
         return actividadesFiltradas;
     }
     
+    /**
+     * Calcula la fecha actual y la guarda en una cadena, con el formato
+     * yyyy-MM-dd.
+     * 
+     * @return cadena que contiene la fecha actual
+     */
     public static String sacarFechaActual(){
         String fecha;
         Calendar calendar = Calendar.getInstance();
@@ -171,6 +191,13 @@ public class ActividadProgramada {
         return fecha;
     }
     
+    /**
+     * Realiza una suma de dias un tipo Date que contiene una fecha x.
+     * 
+     * @param fecha Date al cual se le aumentar un sierto numero de dias.
+     * @param dias dias que seran agregados a la fecha.
+     * @return regresa el Date ya con los dias agregados.
+     */
     public static Date sumarDiasFecha(Date fecha, int dias){
         
         Calendar calendario = Calendar.getInstance();
@@ -179,4 +206,24 @@ public class ActividadProgramada {
         
         return calendario.getTime();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ActividadProgramada other = (ActividadProgramada) obj;
+        if (!Objects.equals(this.idActividadProgramada, other.idActividadProgramada)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

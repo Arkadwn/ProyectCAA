@@ -6,7 +6,9 @@ import java.util.List;
 import reglasnegocio.entidades.ExperienciaEducativa;
 
 /**
- *
+ * Especifica los metodos que un asesor puede realizar con respecto a la clase 
+ * ExperEduDAO
+ * 
  * @author Miguel Leonardo Jimenez Jimenez
  * @author Adrian Bustamante Zarate
  */

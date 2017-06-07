@@ -8,8 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import reglasnegocio.asesor.IActividadProgramadaDAO;
 import reglasnegocio.entidades.ActividadCatalogo;
 import reglasnegocio.entidades.ActividadProgramada;
@@ -17,23 +15,32 @@ import reglasnegocio.entidades.Salon;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
- *
- * @author Leonardo
+ * Contiene los metodos que acceden a la capa de conexion con respecto a la 
+ * clase actividadProgramada.
+ * 
+ * @author Miguel Leonardo Jimenez Jimenez
+ * @author Adrian Bustamante Zarate
  */
 public class ActividadProgramadaDAO implements IActividadProgramadaDAO{
     
-    Connection conexion;
-    PreparedStatement sentenciaSQL;
+    private Connection conexion;
+    private PreparedStatement sentenciaSQL;
     
     /**
+     * Extrae de la base de datos todos las actividades que tiene asignas un
+     * asesor en especifico.
      * 
-     * @param numPersonal
-     * @param idEE
-     * @param lapso
-     * @return 
+     * @param numPersonal identificador unico del asesor
+     * @param idEE identificador unico de una experiencia educativa
+     * @param lapso rango de busqueda de las actividades ya se han las del dia
+     * o la semana
+     * @see ActividadProgramada
+     * @see ActividadProgramada#filtrarActividades(List, String) 
+     * @return regresa las actividades programada para la actual o futuras
+     * fechas.
      */
     @Override
-    public List<ActividadProgramada> sacarActividadesProgramadas(String numPersonal, String idEE, String lapso) {
+    public List<ActividadProgramada> sacarActividadesProgramadas(String numPersonal, String idEE, String lapso) throws SQLException,IOException{
         List<ActividadProgramada> actividades = new ArrayList();
         
         try{
@@ -73,15 +80,15 @@ public class ActividadProgramadaDAO implements IActividadProgramadaDAO{
             }
             
         } catch (SQLException ex) {
-            Logger.getLogger(ActividadProgramadaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException("Error al consultar las actividades",ex);
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(ActividadProgramadaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IOException("Error con el archivo de la base de datos",ex);
         } finally{
             
             try {
                 new Conexion().cerrarConexion(conexion);
             } catch (SQLException ex) {
-                Logger.getLogger(ActividadProgramadaDAO.class.getName()).log(Level.SEVERE, null, ex);
+                throw new SQLException("Error al cerrar la conexion a la base de datos",ex);
             }
         }
         

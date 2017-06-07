@@ -1,13 +1,11 @@
 package reglasnegocio;
 
-import reglasnegocio.usuariogeneral.UsuarioDAO;
-import reglasnegocio.entidades.Usuario;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.SQLException;
+import reglasnegocio.entidadesDAO.UsuarioDAO;
+import reglasnegocio.entidades.Usuario;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
  *
@@ -68,34 +66,20 @@ public class UsuarioDAOTest {
     public void pruebaCifrarContrasenaCorrectamente() {
         String contrasena = "acdc619mljj";
         String contrasenaIncriptada = "49484d2d4d7b4104c96847a1f8a05566526015e2869017e0b45ce413dd3477ce";
-        
-        try {
-            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        String encriptacion = usuarioDAO.cifrarContrasena(contrasena,datosBD);
+        String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
         assertEquals(contrasenaIncriptada, encriptacion);
     }
     
     @Test
     public void pruebaCifrarContrasenaTamañoCorrecto(){
         String contrasena = "elmejordiadeEsaEpocaFuerevolucionMexicanaFueEnMiL9991231QQQ@@@@@@@@@@@@@";
-        
-        try {
-            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        String encriptacion = usuarioDAO.cifrarContrasena(contrasena,datosBD);
+        String encriptacion = usuarioDAO.cifrarContrasena(contrasena);
         boolean confirmacion = encriptacion.length() == 64;
         assertEquals(true,confirmacion);
     }
 
     @Test
-    public void pruebaSacarDatosCorrectosDeUnUsuario() {
+    public void pruebaSacarDatosCorrectosDeUnUsuario() throws SQLException, IOException {
         String nombreUsuario = "Leonardo";
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario("Leonardo");
@@ -105,7 +89,7 @@ public class UsuarioDAOTest {
     }
     
     @Test
-    public void pruebaSacarDatosIncorrectosDeUnUsuario(){
+    public void pruebaSacarDatosIncorrectosDeUnUsuario() throws SQLException, IOException{
         String nombreUsuario = "Roberto";
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario("Roberto");

@@ -1,9 +1,13 @@
 package interfazusuario;
 
 import javax.swing.JOptionPane;
-import reglasnegocio.UsuarioDAO;
-import reglasnegocio.Usuario;
+import reglasnegocio.entidadesDAO.UsuarioDAO;
+import reglasnegocio.entidades.Usuario;
 import interfazusuario.asesor.MenuPrincipalAsesor;
+import interfazusuario.coordinador.MenuPrincipalCoord;
+import java.io.IOException;
+import java.sql.SQLException;
+import reglasnegocio.utilerias.Bitacora;
 
 /**
  *
@@ -11,7 +15,7 @@ import interfazusuario.asesor.MenuPrincipalAsesor;
  * @author Adrian Bustamante Zarate
  */
 public class IniciarSesion extends javax.swing.JFrame {
-    
+    private int contador;
 
     /**
      * Crea una nueva ventana de Inicio de sesion
@@ -19,6 +23,7 @@ public class IniciarSesion extends javax.swing.JFrame {
     public IniciarSesion() {
         initComponents();
         setLocationRelativeTo(null);
+        contador = 0;
     }
     
     private void accionBotonIngresar(){
@@ -28,29 +33,43 @@ public class IniciarSesion extends javax.swing.JFrame {
             Usuario usuario = new Usuario();
             usuario.setContrasena(jPasswordContrasena.getText());
             usuario.setNombreUsuario(txtUsuario.getText());
-            System.out.println(usuario.getNombreUsuario());
             UsuarioDAO usuarioDAO = new UsuarioDAO();
             
-            boolean autentificacion = usuarioDAO.autentificarUsuario(usuario.getNombreUsuario(), usuario.getContrasena());
-            System.out.println(autentificacion);
+            boolean autentificacion = false;
+            
+            try {
+                autentificacion = usuarioDAO.autentificarUsuario(usuario.getNombreUsuario(), usuario.getContrasena());
+            } catch (SQLException ex) {
+                autentificacion = false;
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Ha ocurrido un error se cerrar la aplicacion");
+                Bitacora.guardarBitacora(UsuarioDAO.class, "FATAL", "Error con el serializable" + ex.getMessage());
+                dispose();
+            }
             
             if(autentificacion){
                 
-                JOptionPane.showMessageDialog(this, "Acceso consedido");
-                
+                JOptionPane.showMessageDialog(this, "Acceso concedido");
                 try{
                    usuario = usuarioDAO.sacarDatosUsuario(txtUsuario.getText()); 
-                }catch(NullPointerException e){
+                } catch (SQLException ex) {
+                    autentificacion = false;
+                } catch (IOException ex) {
                     autentificacion = false;
                 }
                 
+                /*Verifica si se logro conseguir los datos del usuario correctamente*/
                 if(autentificacion){
+                    
+                    Bitacora.guardarBitacora(IniciarSesion.class,"INFO", "Ingreso el Usuario: " + usuario.getNombreUsuario());
+                    
+                    /*¿Qué tipo de usuario es? ASE = asesor, COOR = coordinador*/
                     if(usuario.getTipo().equals("ASE")){
-                        new MenuPrincipalAsesor(usuario.getIdUsuario()).setVisible(true);
+                        new MenuPrincipalAsesor(usuario.getNombreUsuario()).setVisible(true);
                         dispose();
                     }else if(usuario.getTipo().equals("COOR")){
-                        //new MenuPrincipalCoordinador(usuario.getIdUsuario()).setVisible(true);
-                        //dispose();
+                        new MenuPrincipalCoord().setVisible(true);
+                        dispose();
                     }
                 }else{
                     JOptionPane.showMessageDialog(this, "Error al comprobar informacion porfavor vuelva a intentarlo");
@@ -59,9 +78,23 @@ public class IniciarSesion extends javax.swing.JFrame {
                 }
                 
             }else{
-                JOptionPane.showMessageDialog(this, "Datos incorrectos");
-                txtUsuario.setText("");
-                jPasswordContrasena.setText("");
+                /*Comprueba el numero de vences que el usuario se ha equibocado al ingresar datos*/
+                if(contador <= 3){
+                    
+                    contador++;
+                    JOptionPane.showMessageDialog(this, "Datos incorrectos");
+                    txtUsuario.setText("");
+                    jPasswordContrasena.setText("");
+                    
+                }else{
+                    
+                    JOptionPane.showMessageDialog(this, "Sino recuerda sus datos por favor contacte al personal encargardo");
+                    txtUsuario.setText("");
+                    jPasswordContrasena.setText("");
+                    dispose();
+                    
+                }
+                
             }
         }
     }
@@ -144,40 +177,6 @@ public class IniciarSesion extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btnModificarIpActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IniciarSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IniciarSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IniciarSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(IniciarSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new IniciarSesion().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

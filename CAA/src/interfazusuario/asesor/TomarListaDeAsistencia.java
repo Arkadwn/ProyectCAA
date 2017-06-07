@@ -1,21 +1,116 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package interfazusuario.asesor;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import reglasnegocio.asesor.IListaAsistenciaDAO;
+import reglasnegocio.entidades.ActividadProgramada;
+import reglasnegocio.entidades.ListaAsistencia;
+import reglasnegocio.entidades.UsuarioAutonomo;
+import reglasnegocio.entidadesDAO.ListaAsistenciaDAO;
+import reglasnegocio.utilerias.Bitacora;
 
 /**
  *
- * @author Leonardo
+ * @author Miguel Leonardo Jimenez Jimenez
+ * @author Adrian Bustamante Zarate
  */
 public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
+    
+    private ListaAsistencia asistencia;
+    private IListaAsistenciaDAO listaAsistenciaDAO;
+    private ActividadProgramada actividad;
+    private DefaultTableModel contenidoTabla;
+    private boolean validacion;
 
     /**
      * Creates new form TomarListaDeAsistencia
      */
     public TomarListaDeAsistencia() {
         initComponents();
+    }
+    
+    public TomarListaDeAsistencia(ActividadProgramada actividad) {
+        initComponents();
+        listaAsistenciaDAO = new ListaAsistenciaDAO();
+        this.actividad = actividad;
+        cargarListaAsistencia();
+    }
+    
+    private void cargarListaAsistencia(){
+        int i = 0;
+        labelFechaActividad.setText(ActividadProgramada.sacarFechaActual());
+        
+        List<UsuarioAutonomo> asistentes = new ArrayList();
+        
+        try {
+            asistencia = listaAsistenciaDAO.sacarListaAsistencia(actividad.getIdActividadProgramada());
+        } catch (SQLException ex) {
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "INFO", ex.getMessage());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "WARN", ex.getMessage());
+        }
+        
+        asistentes = asistencia.getListaAsistencia();
+        
+        listaAsistenciaDAO = new ListaAsistenciaDAO();
+        try {
+            validacion = listaAsistenciaDAO.verificarAntecedentes(actividad.getIdActividadProgramada());
+        } catch (SQLException ex) {
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "INFO", ex.getMessage());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "WARN", ex.getMessage());
+        }
+        
+        if(validacion){
+            JOptionPane.showMessageDialog(this, "Ya se ha pasado lista anteriormente");
+            for(UsuarioAutonomo alumno: asistentes){
+                contenidoTabla = (DefaultTableModel)tablaLista.getModel();
+                contenidoTabla.addRow(new Object[]{alumno.getMatricula(),alumno.getNombre()+" "+alumno.getApellidoPaterno()+" "+alumno.getApellidoMaterno(), asistencia.getAsistencia()[i]});
+                i++;
+            }
+        }else{
+            for(UsuarioAutonomo alumno: asistentes){
+                contenidoTabla = (DefaultTableModel)tablaLista.getModel();
+                contenidoTabla.addRow(new Object[]{alumno.getMatricula(),alumno.getNombre()+" "+alumno.getApellidoPaterno()+" "+alumno.getApellidoMaterno(), true});
+            }
+        }
+    }
+    
+    private Boolean[] sacarAsistenciaPasada(){
+        
+        Boolean[] asistio = new Boolean[50];
+        for(int i = 0; i < contenidoTabla.getRowCount(); i++){
+            asistio[i] = (Boolean)contenidoTabla.getValueAt(i, 2);
+        }
+        
+        return asistio;
+    }
+    
+    private void accionBtnGuardar(){
+        asistencia.setAsistencia(sacarAsistenciaPasada());
+        asistencia.setActividad(actividad);
+        asistencia.setFechaModificacion(ActividadProgramada.sacarFechaActual());
+        
+        try {
+            if(listaAsistenciaDAO.guardarListaAsistencia(asistencia)){
+                JOptionPane.showMessageDialog(this, "Se han guardado los cambios");
+                dispose();
+            }
+        } catch (SQLException ex) {
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "INFO", ex.getMessage());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
+            Bitacora.guardarBitacora(ListaAsistenciaDAO.class, "WARN", ex.getMessage());
+        }
     }
 
     /**
@@ -27,23 +122,18 @@ public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        labelActividad = new javax.swing.JLabel();
         labelFecha = new javax.swing.JLabel();
         scrolTabla = new javax.swing.JScrollPane();
         tablaLista = new javax.swing.JTable();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-
-        labelActividad.setText("Actividad:");
+        labelFechaActividad = new javax.swing.JLabel();
 
         labelFecha.setText("Fecha:");
 
         tablaLista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Matricula", "Nombre", "Asistencia"
@@ -65,12 +155,13 @@ public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
             }
         });
         scrolTabla.setViewportView(tablaLista);
-        if (tablaLista.getColumnModel().getColumnCount() > 0) {
-            tablaLista.getColumnModel().getColumn(0).setResizable(false);
-            tablaLista.getColumnModel().getColumn(1).setResizable(false);
-        }
 
         btnGuardar.setText("Guadar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -79,19 +170,15 @@ public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
             }
         });
 
+        labelFechaActividad.setText("jLabel2");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrolTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelActividad)
-                            .addComponent(labelFecha))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(scrolTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(69, 69, 69)
@@ -99,21 +186,27 @@ public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(71, 71, 71))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelFecha)
+                .addGap(31, 31, 31)
+                .addComponent(labelFechaActividad)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(labelActividad)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(labelFecha)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelFecha)
+                    .addComponent(labelFechaActividad))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(40, 40, 40)
                         .addComponent(scrolTabla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(91, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 498, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnCancelar)
                             .addComponent(btnGuardar))
@@ -127,12 +220,16 @@ public class TomarListaDeAsistencia extends javax.swing.JInternalFrame {
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        accionBtnGuardar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JLabel labelActividad;
     private javax.swing.JLabel labelFecha;
+    private javax.swing.JLabel labelFechaActividad;
     private javax.swing.JScrollPane scrolTabla;
     private javax.swing.JTable tablaLista;
     // End of variables declaration//GEN-END:variables

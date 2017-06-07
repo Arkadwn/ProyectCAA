@@ -3,7 +3,9 @@ package reglasnegocio.entidades;
 import java.util.List;
 
 /**
- *
+ * Es la agrupacion de UsuarioAutonomos que reservaron un lugar en alguna 
+ * ActividadProgramada.
+ * 
  * @author Miguel Leonardo Jimenez Jimenez
  * @author Adrian Bustamante Zarate
  */
@@ -12,13 +14,13 @@ public class ListaAsistencia {
     private String fechaModificacion;
     private List<UsuarioAutonomo> listaAsistencia;
     private String idListaAsistencia;
-    private boolean[] asistencia;
+    private Boolean[] asistencia;
 
-    public boolean[] getAsistencia() {
+    public Boolean[] getAsistencia() {
         return asistencia;
     }
 
-    public void setAsistencia(boolean[] asistencia) {
+    public void setAsistencia(Boolean[] asistencia) {
         this.asistencia = asistencia;
     }
 

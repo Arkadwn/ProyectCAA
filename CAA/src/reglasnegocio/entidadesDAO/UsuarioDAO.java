@@ -7,8 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import reglasnegocio.usuariogeneral.IUsuarioDAO;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 
@@ -31,9 +29,11 @@ public class UsuarioDAO implements IUsuarioDAO{
      * @param usuario nombre que identifica al usuario
      * @param contrasena contraseña del usuario
      * @return regresa la confirmacion de la identidad del usuario
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
      */
     @Override
-    public boolean autentificarUsuario(String usuario, String contrasena){
+    public boolean autentificarUsuario(String usuario, String contrasena) throws SQLException, IOException{
         boolean confirmacion = false;
         String contrasenaSha2;
         
@@ -53,14 +53,14 @@ public class UsuarioDAO implements IUsuarioDAO{
                 }
             }
         }catch(SQLException e){
-            System.out.println(e.getMessage());
+            
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
         }  finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                throw new SQLException("Error la cerrar la conexion a la base de datos",ex);
             }
         }
         
@@ -72,9 +72,11 @@ public class UsuarioDAO implements IUsuarioDAO{
      * 
      * @param contrasena contrasena del usuario.
      * @return la contraseña codificada.
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
      */
     @Override
-    public String cifrarContrasena(String contrasena) {
+    public String cifrarContrasena(String contrasena) throws SQLException,IOException{
         String contrasenaSha2 = "";
         
         try{
@@ -88,14 +90,14 @@ public class UsuarioDAO implements IUsuarioDAO{
                 contrasenaSha2 = tabla.getString(1);
             }
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+            throw new SQLException("Ocurrio un error al encriptar la contraseña",ex);
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IOException("Error al cargar la configuracion de la base de datos",ex);
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                throw new SQLException("Erroe al cerrar la conexion a la base de datos",ex);
             }
         }
         
@@ -107,9 +109,11 @@ public class UsuarioDAO implements IUsuarioDAO{
      * 
      * @param nombreUsuario nombre del usuario.
      * @return datos del usuario
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
      */
     @Override
-    public Usuario sacarDatosUsuario(String nombreUsuario) throws NullPointerException{
+    public Usuario sacarDatosUsuario(String nombreUsuario) throws SQLException,IOException{
         Usuario usuario = null;
         
         try{
@@ -126,19 +130,15 @@ public class UsuarioDAO implements IUsuarioDAO{
             }
             
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+            throw new SQLException("Ha ocurrido un error al sacar los datos del asesor",ex);
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IOException("Error en el archivo que contiene los datos de la BDD",ex);
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                throw new SQLException("Error al cerrar la conexion a la base de datos",ex);
             }
-        }
-        
-        if(usuario == null){
-            throw new NullPointerException();
         }
         
         return usuario;
