@@ -8,7 +8,11 @@
 		<RollingFile name="RollingFile" fileName="${baseDir}/app.log"
 			filePattern="${baseDir}/$${date:yyyy-MM-dd}/app-%d{yyyy-MM-dd}.log.gz">
 		<PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
-		<CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+		<Policies>
+                    <OnStartupTriggeringPolicy />
+                    <SizeBasedTriggeringPolicy size="20 KB" />
+                    <TimeBasedTriggeringPolicy />
+                </Policies>
 		<DefaultRolloverStrategy>
 			<Delete basePath="${baseDir}" maxDepth="2">
 				<IfFileName glob="*/app-*.log.gz" />

@@ -19,9 +19,9 @@ import reglasnegocio.utilerias.UtileriasConexionBDD;
  */
 public class AsesorDAO implements IAsesorDAO{
     
-    PreparedStatement sentenciaSQL;
-    Connection conexion;
-    ResultSet tablaSQL;
+    private PreparedStatement sentenciaSQL;
+    private Connection conexion;
+    private ResultSet tablaSQL;
     
     /**
      * 
@@ -35,13 +35,7 @@ public class AsesorDAO implements IAsesorDAO{
         String[] datosBDD = new String[3];
         
         try{
-            datosBDD = UtileriasConexionBDD.obtenerDatosBDD();
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(AsesorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try{
-            conexion = new Conexion().getConexion(datosBDD);
+            conexion = new Conexion().getConexion(UtileriasConexionBDD.obtenerDatosBDD());
             sentenciaSQL = conexion.prepareStatement("Select nombre, apellidoPaterno, apellidoMaterno, numPersonal, idiomaIngles, idiomaFrances from asesor where nombreUsuario = ?");
             sentenciaSQL.setString(1, nombreUsuario);
             
@@ -57,8 +51,10 @@ public class AsesorDAO implements IAsesorDAO{
                 asesor.setIdiomaFrances(tablaSQL.getBoolean(6));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AsesorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            
+        } finally{
             try {
                 new Conexion().cerrarConexion(conexion);
             } catch (SQLException ex) {

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import reglasnegocio.asesor.IExperienciaEducativaDAOAsesor;
 import reglasnegocio.entidades.ExperienciaEducativa;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.coordinador.IExperEduDAOCoord;
@@ -18,7 +19,7 @@ import reglasnegocio.coordinador.IExperEduDAOCoord;
  *
  * @author Adrian Bustamante Zarate
  */
-public class ExperEduDAO implements IExperEduDAOCoord, IExperEduDAOAsesor{
+public class ExperEduDAO implements IExperEduDAOCoord, IExperienciaEducativaDAOAsesor{
 
     private ResultSet resultadoSQL;
     private PreparedStatement sentenciaSQL;

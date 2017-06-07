@@ -1,5 +1,12 @@
 package reglasnegocio.entidades;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,6 +19,7 @@ public class ActividadProgramada {
     private String HoraFin;
     private String fechaInicio;
     private String fechaFin;
+    private String fechaRealizar;
     private String idActividadProgramada;
     private boolean estado;
     private ActividadCatalogo actividad;
@@ -19,6 +27,14 @@ public class ActividadProgramada {
     private Salon salon;
     private Asesor asesor;
     private List<Reservacion> reservaciones;
+
+    public String getFechaRealizar() {
+        return fechaRealizar;
+    }
+
+    public void setFechaRealizar(String fechaRealizar) {
+        this.fechaRealizar = fechaRealizar;
+    }
 
     public String getHoraInicio() {
         return HoraInicio;
@@ -108,4 +124,59 @@ public class ActividadProgramada {
         this.reservaciones = reservaciones;
     }
     
+    public static List<ActividadProgramada> filtrarActividades(List<ActividadProgramada> actividades, String lapso){
+        List<ActividadProgramada> actividadesFiltradas = new ArrayList();
+        Calendar calendar = Calendar.getInstance();
+        LocalTime horaActividad = null;
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaActual = null;
+        Date fechaActividad = null;
+        
+        try {
+            fechaActual = formatoFecha.parse(sacarFechaActual());
+        } catch (ParseException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        LocalTime horaActual = LocalTime.now();
+        
+        for(ActividadProgramada actividad: actividades){
+            
+            try {
+                fechaActividad = formatoFecha.parse(actividad.getFechaRealizar());
+                horaActividad = LocalTime.parse(actividad.getHoraInicio());
+            } catch (ParseException | DateTimeParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            
+            if(fechaActividad.equals(fechaActual)){
+                if(horaActividad.isAfter(horaActual) && actividad.estado){
+                    actividadesFiltradas.add(actividad);
+                }
+            }else if(fechaActividad.after(fechaActual) && actividad.estado && lapso.equals("Semana") && fechaActividad.before(sumarDiasFecha(fechaActual, 6 - (calendar.get(Calendar.DAY_OF_WEEK))))){
+                    actividadesFiltradas.add(actividad);
+            }
+            
+        }
+        
+        return actividadesFiltradas;
+    }
+    
+    public static String sacarFechaActual(){
+        String fecha;
+        Calendar calendar = Calendar.getInstance();
+        
+        fecha = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) +"-"+calendar.get(Calendar.DAY_OF_MONTH);
+        
+        return fecha;
+    }
+    
+    public static Date sumarDiasFecha(Date fecha, int dias){
+        
+        Calendar calendario = Calendar.getInstance();
+        calendario.setTime(fecha);
+        calendario.add(Calendar.DATE,dias);
+        
+        return calendario.getTime();
+    }
 }

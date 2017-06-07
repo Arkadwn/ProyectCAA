@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import reglasnegocio.asesor.IIdiomaDAOAsesor;
 import reglasnegocio.entidades.Idioma;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.coordinador.IIdiomaDAOCoord;

@@ -1,5 +1,6 @@
-package reglasnegocio;
+package reglasnegocio.entidadesDAO;
 
+import reglasnegocio.entidades.Usuario;
 import conexionbdd.Conexion;
 import java.io.IOException;
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import reglasnegocio.usuariogeneral.IUsuarioDAO;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 
 /**
@@ -34,37 +36,27 @@ public class UsuarioDAO implements IUsuarioDAO{
     public boolean autentificarUsuario(String usuario, String contrasena){
         boolean confirmacion = false;
         String contrasenaSha2;
-        String[] datosBD = new String[3];
         
-        try {
-            datosBD = UtileriasConexionBDD.obtenerDatosBDD();
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-        contrasenaSha2 = cifrarContrasena(contrasena,datosBD);
-        
-        try {
-            accesoBDD = new Conexion().getConexion(datosBD[0],datosBD[1],datosBD[2]);
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
+        contrasenaSha2 = cifrarContrasena(contrasena);
         
         try{
+            accesoBDD = new Conexion().getConexion(UtileriasConexionBDD.obtenerDatosBDD());
             PreparedStatement sentencia = accesoBDD.prepareStatement("SELECT contrasena from usuario where nombreUsuario = ?");
             sentencia.setString(1, usuario);
             
             ResultSet tabla = sentencia.executeQuery();
             
-            while(tabla.next()){
+            if(tabla.next()){
                 if(tabla.getString(1).equals(contrasenaSha2)){
                     confirmacion = true;
-                    break;
                 }
             }
         }catch(SQLException e){
             System.out.println(e.getMessage());
-        }finally{
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }  finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
             } catch (SQLException ex) {
@@ -79,21 +71,14 @@ public class UsuarioDAO implements IUsuarioDAO{
      * Codifica la contraseña que ha sido ingresada por el usuario.
      * 
      * @param contrasena contrasena del usuario.
-     * @param datosBDD
      * @return la contraseña codificada.
      */
     @Override
-    public String cifrarContrasena(String contrasena,String[] datosBDD) {
+    public String cifrarContrasena(String contrasena) {
         String contrasenaSha2 = "";
         
-        try {
-            accesoBDD = new Conexion().getConexion(datosBDD[0], datosBDD[1], datosBDD[2]);
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        
         try{
-            
+            accesoBDD = new Conexion().getConexion(UtileriasConexionBDD.obtenerDatosBDD());
             PreparedStatement sentencia = accesoBDD.prepareStatement("SELECT sha2(?,256)");
             sentencia.setString(1, contrasena);
             
@@ -104,6 +89,8 @@ public class UsuarioDAO implements IUsuarioDAO{
             }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);
@@ -124,33 +111,24 @@ public class UsuarioDAO implements IUsuarioDAO{
     @Override
     public Usuario sacarDatosUsuario(String nombreUsuario) throws NullPointerException{
         Usuario usuario = null;
-        String[] datosBDD = new String[3];
-        
-        try {
-            datosBDD = UtileriasConexionBDD.obtenerDatosBDD();
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try {
-            accesoBDD = new Conexion().getConexion(datosBDD[0],datosBDD[1],datosBDD[2]);
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
         
         try{
-            PreparedStatement sentencia = accesoBDD.prepareStatement("SELECT idUsuario, tipo from Usuario where nombreUsuario = ?");
+            accesoBDD = new Conexion().getConexion(UtileriasConexionBDD.obtenerDatosBDD());
+            PreparedStatement sentencia = accesoBDD.prepareStatement("SELECT tipo,nombreUsuario from Usuario where nombreUsuario = ?");
             sentencia.setString(1, nombreUsuario);
+            
             ResultSet tabla= sentencia.executeQuery();
             
             if(tabla.next()){
                 usuario = new Usuario();
-                usuario.setIdUsuario(tabla.getString(1));
-                usuario.setTipo(tabla.getString(2));
+                usuario.setNombreUsuario(tabla.getString(2));
+                usuario.setTipo(tabla.getString(1));
             }
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             try {
                 new Conexion().cerrarConexion(accesoBDD);

@@ -1,5 +1,6 @@
-package reglasnegocio;
+package reglasnegocio.usuariogeneral;
 
+import reglasnegocio.entidades.Usuario;
 import java.sql.SQLException;
 
 /**
@@ -9,6 +10,6 @@ import java.sql.SQLException;
  */
 public interface IUsuarioDAO {
     public boolean autentificarUsuario(String usuario, String contrasena)throws SQLException;
-    public String cifrarContrasena(String contrasena,String[] datosBDD);
+    public String cifrarContrasena(String contrasena);
     public Usuario sacarDatosUsuario(String nombreUsuario)throws NullPointerException;
 }

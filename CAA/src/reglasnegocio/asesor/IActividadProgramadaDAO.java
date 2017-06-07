@@ -9,4 +9,5 @@ import reglasnegocio.entidades.ActividadProgramada;
  */
 public interface IActividadProgramadaDAO {
     public List<ActividadProgramada> sacarActividadesProgramadas(String numPersonal, String idEE, String lapso);
+    
 }
