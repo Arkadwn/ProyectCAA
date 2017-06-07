@@ -13,22 +13,36 @@ import javax.swing.JOptionPane;
 import reglasnegocio.utilerias.UtileriasConexionBDD;
 import reglasnegocio.utilerias.UtileriasEncriptado;
 
+/**
+ * Muestra la ventana que establece la conexión principal con la BDD
+ * 
+ * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimenez
+ */
 public class CofigurarBDD extends javax.swing.JFrame {
 
+    /**
+     * Construye la ventana, inicializa los componentes y centra la localización
+     * 
+     * @throws BadPaddingException
+     * @throws Exception
+     */
     public CofigurarBDD() throws BadPaddingException, Exception {
         initComponents();
         cargarConfiguracion();
         setLocationRelativeTo(null);
-        ignorarEntradasKey();
+        ignorarEntradasLetras();
     }
-
-    private void ignorarEntradasKey() {
+    /**
+     * Limita al usuario la entrada de letras en los campos de IP
+     */
+    private void ignorarEntradasLetras() {
         txtIP.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 char caracter = e.getKeyChar();
                 if (((caracter < '0')
                         || (caracter > '9'))
-                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                        && (caracter != '\b')) {
                     e.consume();
                 }
             }
@@ -38,7 +52,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 char caracter = e.getKeyChar();
                 if (((caracter < '0')
                         || (caracter > '9'))
-                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                        && (caracter != '\b')) {
                     e.consume();
                 }
             }
@@ -48,7 +62,7 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 char caracter = e.getKeyChar();
                 if (((caracter < '0')
                         || (caracter > '9'))
-                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                        && (caracter != '\b')) {
                     e.consume();
                 }
             }
@@ -58,18 +72,28 @@ public class CofigurarBDD extends javax.swing.JFrame {
                 char caracter = e.getKeyChar();
                 if (((caracter < '0')
                         || (caracter > '9'))
-                        && (caracter != '\b' /*corresponde a BACK_SPACE*/)) {
+                        && (caracter != '\b')) {
                     e.consume();
                 }
             }
         });
     }
-
+    /**
+     * Concatena todos los campos de la IP y la retorna en una cadena
+     * 
+     * @return Cadena resultante de la concatenación de los campos
+     */
     private String regresarIP() {
         String cadenaIP = txtIP.getText() + "." + txtIP2.getText() + "." + txtIP3.getText() + "." + txtIP4.getText();
         return cadenaIP;
     }
-
+    /**
+     * Divide una cadena con formato de IP en un arreglo de String
+     * 
+     * @param IP Dirección IP a dividir
+     * @return Arreglo de String, cada octeto es colocado en una posición del
+     * arreglo
+     */
     private String[] dividirIP(String IP) {
         String[] arrIP = new String[4];
         StringTokenizer tokens;
@@ -81,7 +105,14 @@ public class CofigurarBDD extends javax.swing.JFrame {
         }
         return arrIP;
     }
-
+    /**
+     * Metodo que con ayuda de metodos de la capa inferior, extrae información
+     * de los datos para la conexión a la BDD y la muestra en los campos 
+     * predeterminados.
+     * 
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException 
+     */
     private void cargarConfiguracion() throws IllegalBlockSizeException, BadPaddingException {
         File archivo = new File(UtileriasConexionBDD.obtenerDirectorioSO(true));
         if (archivo.exists()) {
@@ -101,7 +132,10 @@ public class CofigurarBDD extends javax.swing.JFrame {
             creacionDirectorio();
         }
     }
-
+    /**
+     * Crea con ayuda de la capa inferior el directorio donde se guardara y 
+     * extraera la información sobre la conexión a la BDD.
+     */
     private void creacionDirectorio() {
         try {
             File carpeta = new File(UtileriasConexionBDD.obtenerDirectorioSO(false));
@@ -276,7 +310,15 @@ public class CofigurarBDD extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnConectarActionPerformed
 
-    public void guardarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception {
+    /**
+     * Obtiene los datos que le ingresa el usuario para establecer la conexión
+     * y usando metodos de la capa inferior la guarda
+     * 
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws Exception
+     */
+    private void guardarConfiguracion() throws IllegalBlockSizeException, BadPaddingException, Exception {
         byte[] contraseña = UtileriasEncriptado.cifra(txtContraseña.getText());
         UtileriasConexionBDD.serializarDatosBDD(regresarIP(), txtUsuario.getText(), contraseña);
         JOptionPane.showMessageDialog(this, "Conexión establecida");
@@ -288,6 +330,10 @@ public class CofigurarBDD extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

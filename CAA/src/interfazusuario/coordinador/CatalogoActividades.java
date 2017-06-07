@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import reglasnegocio.entidadesDAO.ActividadCatalogoDAO;
 import reglasnegocio.entidadesDAO.ExperEduDAO;
 import reglasnegocio.entidadesDAO.IdiomaDAO;
@@ -17,22 +17,38 @@ import reglasnegocio.entidades.ExperienciaEducativa;
 import reglasnegocio.entidades.Idioma;
 
 /**
+ * Muestra la ventana referente al CU-20 Administrar catalogo de actividades
  *
  * @author Adrian Bustamante Zarate
+ * @author Miguel Leonardo Jimnez
  */
 public class CatalogoActividades extends javax.swing.JInternalFrame {
+
     private String idActividad;
-    private String nombreActividad;
+
+    /**
+     * Construye la ventana de Administración de catalogo de catalogo de
+     * actividades, inicializa componentes y ejecuta un metodo de carga de
+     * idiomas.
+     */
     public CatalogoActividades() {
         initComponents();
         cargarIdiomas(comboIdioma);
     }
 
+    /**
+     * Carga los idiomas actuales implementando metodos de la capa inferior, los
+     * resultados se aplican al combobox que se envia.
+     *
+     * @param combo Objeto de tipo JComboBox en este se haran los cambios segun
+     * los resultados encontrados
+     */
     private void cargarIdiomas(JComboBox combo) {
         IdiomaDAO DAO = new IdiomaDAO();
         Idioma idioma;
         List<Idioma> listaIdiomas;
         combo.removeAllItems();
+
         try {
             listaIdiomas = DAO.mostrarIdiomasActuales();
             combo.addItem("Ninguno");
@@ -49,12 +65,20 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         }
     }
 
-    private void cargarEEs(String id, JComboBox combo) {
+    /**
+     * Carga todas las EE segun el idIdioma seleccionado previamente
+     *
+     * @param idIdioma Objeto de tipo String que contiene el id del Idioma a
+     * fitrar para obtener las EE
+     * @param combo Objeto de tipo JComboBox en este se haran los cambios segun
+     * los resultados de las EE concordantes con el Idioma seleccionado
+     */
+    private void cargarEEs(String idIdioma, JComboBox combo) {
         ExperEduDAO DAO = new ExperEduDAO();
         ExperienciaEducativa EE;
         combo.removeAllItems();
         try {
-            List<ExperienciaEducativa> listaEEs = DAO.mostrarEEPorIdioma(id);
+            List<ExperienciaEducativa> listaEEs = DAO.mostrarEEPorIdioma(idIdioma);
             if (listaEEs.isEmpty()) {
                 combo.addItem("Ninguno");
             }
@@ -109,7 +133,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         jLabel19 = new javax.swing.JLabel();
         txtNombreEdit = new javax.swing.JTextField();
         btnGuardarEdit = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnSalirEditar = new javax.swing.JButton();
         btnBuscarEdit = new javax.swing.JButton();
         comboTipoEdit = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
@@ -127,14 +151,14 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         labelNombreBorrar = new javax.swing.JLabel();
         labelTipoBorrar = new javax.swing.JLabel();
         labelEEBorrar = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnBorrar = new javax.swing.JButton();
+        btnSalirBorrar = new javax.swing.JButton();
         btnBuscarBorrar = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         txtDescripcionBorrar = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
-        jButton7 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
+        btnMostrarDetalles = new javax.swing.JButton();
+        btnSalirConsul = new javax.swing.JButton();
         radioNombreConsultar = new javax.swing.JRadioButton();
         jScrollPane6 = new javax.swing.JScrollPane();
         listConsultar = new javax.swing.JList<>();
@@ -201,7 +225,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
 
         jLabel34.setText("Tipo:");
 
-        comboTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguno", "Conversación", "Otra", "Otra2" }));
+        comboTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguno", "Conversación", "Taller", "Asesorias" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -315,10 +339,10 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton4.setText("Salir");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnSalirEditar.setText("Salir");
+        btnSalirEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnSalirEditarActionPerformed(evt);
             }
         });
 
@@ -329,7 +353,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
             }
         });
 
-        comboTipoEdit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguno", "Conversación", "Otra", "Otra2" }));
+        comboTipoEdit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguno", "Conversación", "Taller", "Asesorias" }));
 
         jLabel12.setText("Tipo:");
 
@@ -352,7 +376,6 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnBuscarEdit))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
@@ -374,7 +397,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(71, 71, 71)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSalirEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnGuardarEdit)
                 .addGap(92, 92, 92))
@@ -415,7 +438,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                         .addGap(18, 18, 18)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4)
+                    .addComponent(btnSalirEditar)
                     .addComponent(btnGuardarEdit))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -452,17 +475,17 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         buttonGroup2.add(radioEEBorrar);
         radioEEBorrar.setText("EE");
 
-        jButton1.setText("Borrar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnBorrar.setText("Borrar");
+        btnBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnBorrarActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Salir");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnSalirBorrar.setText("Salir");
+        btnSalirBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnSalirBorrarActionPerformed(evt);
             }
         });
 
@@ -502,9 +525,9 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jLabel22)
                         .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jButton2)
+                            .addComponent(btnSalirBorrar)
                             .addGap(69, 69, 69)
-                            .addComponent(jButton1))
+                            .addComponent(btnBorrar))
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jLabel24)
@@ -535,8 +558,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtBusquedaBorrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel26))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addComponent(jLabel26)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -559,8 +581,8 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton2)
-                            .addComponent(jButton1))
+                            .addComponent(btnSalirBorrar)
+                            .addComponent(btnBorrar))
                         .addGap(49, 49, 49))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -569,12 +591,12 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("Borrar", jPanel3);
 
-        jButton7.setText("Mostrar detalles");
+        btnMostrarDetalles.setText("Mostrar detalles");
 
-        jButton10.setText("Salir");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        btnSalirConsul.setText("Salir");
+        btnSalirConsul.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                btnSalirConsulActionPerformed(evt);
             }
         });
 
@@ -634,8 +656,7 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                         .addComponent(btnBuscarConsultar))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6)
@@ -660,9 +681,9 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jButton10)
+                                .addComponent(btnSalirConsul)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton7))
+                                .addComponent(btnMostrarDetalles))
                             .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(47, 47, 47))))
         );
@@ -692,11 +713,11 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelNombreConsul, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(labelTipoConsul, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(labelEEConsul, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -705,8 +726,8 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton7)
-                    .addComponent(jButton10))
+                    .addComponent(btnMostrarDetalles)
+                    .addComponent(btnSalirConsul))
                 .addGap(63, 63, 63))
         );
 
@@ -745,14 +766,19 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         ActividadCatalogoDAO DAO = new ActividadCatalogoDAO();
         try {
-            if (verificarDatos()) {
+            if (verificarDatosCrear()) {
                 if (DAO.guardarActividadCatal(comboEE.getItemAt(comboEE.getSelectedIndex()).substring(0, 2), comboTipo.getItemAt(comboTipo.getSelectedIndex()), txtNombre.getText(), txtDescripcion.getText())) {
                     JOptionPane.showMessageDialog(this, "Se ha guardado correctamente la actividad en el catalogo");
+                    vaciarComponentes();
                 }
-                vaciarComponentes();
+
             }
-        } catch (SQLException | IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "guardar una actividad, revise conexión a red.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
         }
 
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -764,6 +790,14 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
+    /**
+     * Retorna un DefaultListModel resultado de la busqueda de una actividad en
+     * la capa inferior de negocio, extrae el resultado y lo guarda en un modelo
+     *
+     * @param criterio Criterio de busqueda para la consulta
+     * @param buscando Lo que sera comparado con el criterio de busqueda
+     * @return DefaultlistModel resultado de la busqueda
+     */
     private DefaultListModel busquedaActividades(String criterio, String buscando) {
 
         ActividadCatalogoDAO DAO = new ActividadCatalogoDAO();
@@ -783,35 +817,51 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     }
     private void btnBuscarEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarEditActionPerformed
         if (radioNombreEdit.isSelected()) {
-            listEdit.setModel(busquedaActividades("actividadcatalogo.nombreActividad", txtBusquedaEdit.getText()));
-            listEdit.updateUI();
+            mostrarResultadosBusqueda(listEdit, txtBusquedaEdit, true);
         } else if (radioEEEdit.isSelected()) {
-            listEdit.setModel(busquedaActividades("ee.nombre", txtBusquedaEdit.getText()));
-            listEdit.updateUI();
+            mostrarResultadosBusqueda(listEdit, txtBusquedaEdit, false);
         }
     }//GEN-LAST:event_btnBuscarEditActionPerformed
 
     private void btnBuscarBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarBorrarActionPerformed
         if (radioNombreBorrar.isSelected()) {
-            listBorrar.setModel(busquedaActividades("actividadcatalogo.nombreActividad", txtBusquedaBorrar.getText()));
-            listBorrar.updateUI();
+            mostrarResultadosBusqueda(listBorrar, txtBusquedaBorrar, true);
         } else if (radioEEBorrar.isSelected()) {
-            listBorrar.setModel(busquedaActividades("ee.nombre", txtBusquedaBorrar.getText()));
-            listBorrar.updateUI();
+            mostrarResultadosBusqueda(listBorrar, txtBusquedaBorrar, false);
         }
     }//GEN-LAST:event_btnBuscarBorrarActionPerformed
-
+    /**
+     * Muestra los resultados de la busqueda en el JList que se le envia, segun
+     * sea los resultados de la busqueda.
+     *
+     * @param list JList en donde sera mostrados los resultados de la busqueda
+     * @param txt jTextField del que se tomara la busqueda
+     * @param esNombre establece el criterio de busqueda
+     */
+    private void mostrarResultadosBusqueda(JList list, JTextField txt, boolean esNombre) {
+        if (esNombre) {
+            list.setModel(busquedaActividades("actividadcatalogo.nombreActividad", txt.getText()));
+            list.updateUI();
+            if (list.getModel().getSize() == 0) {
+                JOptionPane.showMessageDialog(this, "No se ha encontrado ningun resultado concordante");
+            }
+        } else {
+            list.setModel(busquedaActividades("ee.nombre", txt.getText()));
+            list.updateUI();
+            if (list.getModel().getSize() == 0) {
+                JOptionPane.showMessageDialog(this, "No se ha encontrado ningun resultado concordante");
+            }
+        }
+    }
     private void txtBusquedaBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaBorrarActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtBusquedaBorrarActionPerformed
 
     private void btnBuscarConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarConsultarActionPerformed
         if (radioNombreConsultar.isSelected()) {
-            listConsultar.setModel(busquedaActividades("actividadcatalogo.nombreActividad", txtBusquedaConsultar.getText()));
-            listConsultar.updateUI();
+            mostrarResultadosBusqueda(listConsultar, txtBusquedaConsultar, true);
         } else if (radioEEConsultar.isSelected()) {
-            listConsultar.setModel(busquedaActividades("ee.nombre", txtBusquedaConsultar.getText()));
-            listConsultar.updateUI();
+            mostrarResultadosBusqueda(listConsultar, txtBusquedaConsultar, false);
         }
     }//GEN-LAST:event_btnBuscarConsultarActionPerformed
 
@@ -822,52 +872,68 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         ActividadCatalogo actividadSelec = new ActividadCatalogo();
         String[] idActividad = listEdit.getSelectedValue().split(" ");
         this.idActividad = idActividad[0];
+
         try {
             actividadSelec = DAOActivi.mostrarDetallesActiv(this.idActividad);
             nombresEE = DAOEE.obtenerEEmismoIdioma(actividadSelec.getExperEdu());
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
+        } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "mostrar los detalles de la actividad, por favor revise conexión a red.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
+            }
 
         rellenarCamposEdit(actividadSelec, nombresEE);
 
     }//GEN-LAST:event_listEditValueChanged
-    private void rellenarCamposEdit(ActividadCatalogo actividad, List<String> nombresEE){
+    /**
+     * Rellena todos los campos correspondientes a la edición de una Actividad
+     *
+     * @param actividad Parametro de tipo ActividadCatalogo, objeto de donde se
+     * obtendra toda la información sobre una actividad previamente elegida para
+     * para que los campos sea rellenados con ella.
+     * @param nombresEE Lista de String's que contiene los nombres de las EE
+     * concordantes con el mismo idioma de la EE de la actividad
+     */
+    private void rellenarCamposEdit(ActividadCatalogo actividad, List<String> nombresEE) {
         comboEEEdit.removeAllItems();
         txtNombreEdit.setText(actividad.getNombre());
         txtDescripEdit.setText(actividad.getDescripcion());
+
         while (!nombresEE.isEmpty()) {
             comboEEEdit.addItem(nombresEE.remove(0));
         }
-        int c=0;
-        while(true){
-            if(actividad.getExperEdu().equals(comboEEEdit.getItemAt(c).substring(0, 2))){
+
+        int c = 0;
+        while (true) {
+            if (actividad.getExperEdu().equals(comboEEEdit.getItemAt(c).substring(0, 2))) {
                 break;
             }
             c++;
         }
         comboEEEdit.setSelectedIndex(c);
-        c=0;
-        while(true){
-            if(actividad.getTipoActividad().equals(comboTipoEdit.getItemAt(c))){
+
+        c = 0;
+        while (true) {
+            if (actividad.getTipoActividad().equals(comboTipoEdit.getItemAt(c))) {
                 break;
             }
             c++;
         }
         comboTipoEdit.setSelectedIndex(c);
     }
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnSalirBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirBorrarActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnSalirBorrarActionPerformed
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void btnSalirConsulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirConsulActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton10ActionPerformed
+    }//GEN-LAST:event_btnSalirConsulActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnSalirEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirEditarActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnSalirEditarActionPerformed
 
     private void listEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listEditMouseClicked
 
@@ -880,94 +946,148 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     private void btnGuardarEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarEditActionPerformed
         ActividadCatalogoDAO DAO = new ActividadCatalogoDAO();
         ActividadCatalogo activiCatalModif = new ActividadCatalogo();
-        activiCatalModif.setDescripcion(txtDescripEdit.getText());
-        activiCatalModif.setExperEdu(comboEEEdit.getItemAt(comboEEEdit.getSelectedIndex()).substring(0, 2));//Verficar datos
-        activiCatalModif.setIdActividad(idActividad);
-        activiCatalModif.setNombre(txtNombreEdit.getText());
-        activiCatalModif.setTipoActividad(comboTipoEdit.getItemAt(comboTipoEdit.getSelectedIndex()));
-        try {
-            if(DAO.editarActividadCatal(activiCatalModif))
-                JOptionPane.showMessageDialog(this, "Se ha editado correctamente la actividad");
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+
+        if (listEdit.isSelectionEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debes seleccionar una actividad antes de guardar cambios");
+        } else if (verificarDatosEdit()) {
+            activiCatalModif.setDescripcion(txtDescripEdit.getText());
+            activiCatalModif.setExperEdu(comboEEEdit.getItemAt(comboEEEdit.getSelectedIndex()).substring(0, 2));
+            activiCatalModif.setIdActividad(idActividad);
+            activiCatalModif.setNombre(txtNombreEdit.getText());
+            activiCatalModif.setTipoActividad(comboTipoEdit.getItemAt(comboTipoEdit.getSelectedIndex()));
+
+            try {
+                if (DAO.editarActividadCatal(activiCatalModif)) {
+                    vaciarComponentesEdit();
+                    JOptionPane.showMessageDialog(this, "Se ha editado correctamente la actividad");
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "guardar las modificaciones, revise conexión a red");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
+            }
         }
     }//GEN-LAST:event_btnGuardarEditActionPerformed
 
     private void listBorrarValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listBorrarValueChanged
         ActividadCatalogoDAO DAOActivi = new ActividadCatalogoDAO();
-        ActividadCatalogo actividadSelec = new ActividadCatalogo(); //Factorizar metodo
+        ActividadCatalogo actividadSelec = new ActividadCatalogo();
         String[] nombreActividad = listBorrar.getSelectedValue().split(" ");
         idActividad = nombreActividad[0];
-        this.nombreActividad = nombreActividad[2];
+
         try {
             actividadSelec = DAOActivi.mostrarDetallesActiv(this.idActividad);
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "mostrar los detalles de la actividad, revise conexión a red.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
         }
+
         rellenarCamposBorrado(actividadSelec);
     }//GEN-LAST:event_listBorrarValueChanged
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
         ActividadCatalogoDAO DAO = new ActividadCatalogoDAO();
-        if(listBorrar.isSelectionEmpty()){
+
+        if (listBorrar.isSelectionEmpty()) {
             JOptionPane.showMessageDialog(this, "Primero debe seleccionar una actividad de la lista de busqueda");
-        }else{
+        } else {
             try {
-                if(DAO.borrarActiviCatal(idActividad))
+                if (DAO.borrarActiviCatal(idActividad)) {
+                    vaciarComponentesBorrar();
                     JOptionPane.showMessageDialog(this, "Se ha borrado la actividad correctamente");
-            } catch (SQLException | IOException ex) {
-                Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "borrar la actividad, por favor revise conexión a red.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                        + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
             }
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void listConsultarValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listConsultarValueChanged
         ActividadCatalogoDAO DAOActivi = new ActividadCatalogoDAO();
-        ActividadCatalogo actividadSelec = new ActividadCatalogo(); //Factorizar metodo
+        ActividadCatalogo actividadSelec = new ActividadCatalogo();
         String[] nombreActividad = listConsultar.getSelectedValue().split(" ");
         idActividad = nombreActividad[0];
+
         try {
             actividadSelec = DAOActivi.mostrarDetallesActiv(this.idActividad);
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "por favor mostrar los detalles de la actividad, revise conexión a red.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
         }
+
         rellenarCamposConsultar(actividadSelec);
     }//GEN-LAST:event_listConsultarValueChanged
-    private void rellenarCamposConsultar(ActividadCatalogo actividad){
+    /**
+     * Rellena los campos correspondientes a la consulta de una actividad
+     *
+     * @param actividad Parametro de tipo ActividadCatalogo, objeto que tendrá
+     * toda la información que se mostrará al usario segun su elección
+     */
+    private void rellenarCamposConsultar(ActividadCatalogo actividad) {
         ExperEduDAO DAO = new ExperEduDAO();
         txtDescripConsul.setText(actividad.getDescripcion());
+
         try {
             labelEEConsul.setText(DAO.retornarEEPorIdEE(actividad.getExperEdu()).getNombreEE());
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "mostrar la información completa de esta actividad, revise conexión a red y reinicie el sistema.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
         }
+
         labelNombreConsul.setText(actividad.getNombre());
         labelTipoConsul.setText(actividad.getTipoActividad());
     }
-    private void rellenarCamposBorrado(ActividadCatalogo actividad){
+
+    /**
+     * Rellena los campos correspondientes a la eliminación de una actividad
+     *
+     * @param actividad Parametro de tipo ActividadCatalogo, objeto que tendrá
+     * toda la información que se mostrará al usario segun su elección
+     */
+    private void rellenarCamposBorrado(ActividadCatalogo actividad) {
         ExperEduDAO DAO = new ExperEduDAO();
         txtDescripcionBorrar.setText(actividad.getDescripcion());
+
         try {
             labelEEBorrar.setText(DAO.retornarEEPorIdEE(actividad.getExperEdu()).getNombreEE());
-        } catch (SQLException | IOException ex) {
-            Logger.getLogger(CatalogoActividades.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "mostrar la información completa de esta actividad, revise conexión a red y reinicie el sistema.");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Oops a ocurrido un error al tratar de "
+                    + "cargar el archivo de configuración de conexión a la BDD, reinicie el sistema.");
         }
+
         labelNombreBorrar.setText(actividad.getNombre());
         labelTipoBorrar.setText(actividad.getTipoActividad());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBorrar;
     private javax.swing.JButton btnBuscarBorrar;
     private javax.swing.JButton btnBuscarConsultar;
     private javax.swing.JButton btnBuscarEdit;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnGuardarEdit;
+    private javax.swing.JButton btnMostrarDetalles;
     private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnSalirBorrar;
+    private javax.swing.JButton btnSalirConsul;
+    private javax.swing.JButton btnSalirEditar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
@@ -976,11 +1096,6 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<String> comboIdioma;
     private javax.swing.JComboBox<String> comboTipo;
     private javax.swing.JComboBox<String> comboTipoEdit;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1039,8 +1154,13 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNombreEdit;
     // End of variables declaration//GEN-END:variables
-
-    private boolean verificarDatos() {
+    /**
+     * Verifica que todos los datos introducidos en la creación de una actividad
+     * sea correctos.
+     *
+     * @return true si los datos son correctos si no es así retorna falso
+     */
+    private boolean verificarDatosCrear() {
         boolean datosCorrectos = true;
         if (txtNombre.getText().length() > 32 || txtNombre.getText().length() < 3) {
             datosCorrectos = false;
@@ -1059,10 +1179,61 @@ public class CatalogoActividades extends javax.swing.JInternalFrame {
         return datosCorrectos;
     }
 
+    /**
+     * Verifica que todos los datos introducidos en la edición de una actividad
+     * sea correctos.
+     *
+     * @return true si los datos son correctos si no es así retorna falso
+     */
+    private boolean verificarDatosEdit() {
+        boolean datosCorrectos = true;
+        if (txtNombreEdit.getText().length() > 32 || txtNombre.getText().length() < 3) {
+            datosCorrectos = false;
+            JOptionPane.showMessageDialog(this, "El tamaño del nombre no debe superar los 64 digitos y con un minimo de 5 digitos");
+        } else if (txtDescripEdit.getText().length() > 128 || txtDescripcion.getText().length() < 16) {
+            datosCorrectos = false;
+            JOptionPane.showMessageDialog(this, "El tamaño de la descripción no debe superar los 128 digitos y con un minimo de 20 digitos");
+        } else if (comboEEEdit.getSelectedIndex() == 0 || comboEE.getSelectedIndex() == -1) {
+            datosCorrectos = false;
+            JOptionPane.showMessageDialog(this, "Se ha de seleccionar una EE");
+        } else if (comboTipoEdit.getSelectedIndex() == 0 || comboEE.getSelectedIndex() == -1) {
+            datosCorrectos = false;
+            JOptionPane.showMessageDialog(this, "Se ha de seleccionar un tipo de actividad");
+        }
+
+        return datosCorrectos;
+    }
+
+    /**
+     * Vacia los componentes correspondientes a la creación de una actividad; se
+     * usa cuando la creación fue realizada.
+     */
     private void vaciarComponentes() {
         comboIdioma.setSelectedIndex(0);
         txtNombre.setText("");
         txtDescripcion.setText("");
         comboTipo.setSelectedIndex(0);
+    }
+
+    /**
+     * Vacia los componentes correspondientes a la edición de una actividad; se
+     * usa cuando la edición fue realizada.
+     */
+    private void vaciarComponentesEdit() {
+        comboEEEdit.removeAllItems();
+        txtNombreEdit.setText("");
+        txtDescripEdit.setText("");
+        comboTipoEdit.setSelectedIndex(0);
+    }
+
+    /**
+     * Vacia los componentes correspondientes al borrado de una actividad; se
+     * usa cuando la eliminación fue realizada.
+     */
+    private void vaciarComponentesBorrar() {
+        labelNombreBorrar.setText("");
+        labelEEBorrar.setText("");
+        txtDescripcionBorrar.setText("");
+        labelTipoBorrar.setText("");
     }
 }

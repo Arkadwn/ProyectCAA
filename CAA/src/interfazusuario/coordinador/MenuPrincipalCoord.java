@@ -3,6 +3,9 @@ package interfazusuario.coordinador;
 import interfazusuario.IniciarSesion;
 
 /**
+ * Mostrara al coordinador el menu principal en donde sera capaz de lanzar otras
+ * opciones a otros casos de uso. Funcionara de contenedor para las ventanas
+ * internas que tendra.
  *
  * @author Adrian Bustamante Zarate
  * @author Miguel Leonardo Jimenez
@@ -10,13 +13,14 @@ import interfazusuario.IniciarSesion;
 public class MenuPrincipalCoord extends javax.swing.JFrame {
 
     /**
-     * Crea una nueva ventana del menu principal del coordinador
+     * Construye ventana del menu principal, inicializa los componentes y define
+     * la ubicación de la ventana.
      */
     public MenuPrincipalCoord() {
         initComponents();
         setLocationRelativeTo(null);
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
